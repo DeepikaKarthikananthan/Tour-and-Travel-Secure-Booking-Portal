@@ -1,0 +1,142 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'dashboard' %}
+{% block title %}Admin Dashboard — Wayfarer & Co.{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="wf-kpi-card">
+            <div class="wf-kpi-icon mb-2" style="background: rgba(11,61,69,0.08); color: var(--wf-navy);"><i class="fa-solid fa-users"></i></div>
+            <div class="wf-stat-num">{{ stats.total_users }}</div>
+            <div class="wf-stat-label">Total Users</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="wf-kpi-card">
+            <div class="wf-kpi-icon mb-2" style="background: rgba(63,125,92,0.1); color: var(--wf-palm);"><i class="fa-solid fa-map"></i></div>
+            <div class="wf-stat-num">{{ stats.total_tours }}</div>
+            <div class="wf-stat-label">Total Tours</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="wf-kpi-card">
+            <div class="wf-kpi-icon mb-2" style="background: rgba(232,163,61,0.15); color: var(--wf-amber);"><i class="fa-solid fa-ticket"></i></div>
+            <div class="wf-stat-num">{{ stats.total_bookings }}</div>
+            <div class="wf-stat-label">Total Bookings</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="wf-kpi-card">
+            <div class="wf-kpi-icon mb-2" style="background: rgba(232,90,79,0.12); color: var(--wf-coral);"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="wf-stat-num">${{ '%.0f'|format(stats.total_revenue) }}</div>
+            <div class="wf-stat-label">Total Revenue</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="wf-kpi-card d-flex justify-content-between align-items-center">
+            <div>
+                <div class="wf-stat-label mb-1">Pending Bookings</div>
+                <div class="fs-4 fw-semibold">{{ stats.pending_bookings }}</div>
+            </div>
+            <span class="badge bg-warning wf-badge-status">Pending</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="wf-kpi-card d-flex justify-content-between align-items-center">
+            <div>
+                <div class="wf-stat-label mb-1">Confirmed Bookings</div>
+                <div class="fs-4 fw-semibold">{{ stats.confirmed_bookings }}</div>
+            </div>
+            <span class="badge bg-success wf-badge-status">Confirmed</span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="wf-kpi-card d-flex justify-content-between align-items-center">
+            <div>
+                <div class="wf-stat-label mb-1">Total Feedback</div>
+                <div class="fs-4 fw-semibold">{{ stats.total_feedback }}</div>
+            </div>
+            <i class="fa-solid fa-comment text-muted"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-7">
+        <div class="wf-panel p-4">
+            <h6 class="mb-3">Revenue (Last 6 Months)</h6>
+            <canvas id="revenueChart" height="220"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="wf-panel p-4">
+            <h6 class="mb-3">Bookings by Status</h6>
+            <canvas id="statusChart" height="220"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="wf-panel p-4">
+    <h6 class="mb-3">Recent Bookings</h6>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr><th>Reference</th><th>Customer</th><th>Tour</th><th>Date</th><th>Amount</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for b in recent_bookings %}
+                <tr>
+                    <td class="wf-tour-dest">{{ b.reference }}</td>
+                    <td>{{ b.user.name }}</td>
+                    <td>{{ b.tour.name }}</td>
+                    <td>{{ b.travel_date.strftime('%b %d, %Y') }}</td>
+                    <td>{{ b.total_amount|currency }}</td>
+                    <td><span class="badge bg-{{ b.status_badge_class() }} wf-badge-status">{{ b.status }}</span></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No bookings yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const revenueCtx = document.getElementById('revenueChart');
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels|tojson }},
+            datasets: [{
+                label: 'Revenue',
+                data: {{ chart_values|tojson }},
+                borderColor: '#E85A4F',
+                backgroundColor: 'rgba(232,90,79,0.12)',
+                tension: 0.35,
+                fill: true,
+                pointBackgroundColor: '#E85A4F'
+            }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    const statusCtx = document.getElementById('statusChart');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ status_counts.keys()|list|tojson }},
+            datasets: [{
+                data: {{ status_counts.values()|list|tojson }},
+                backgroundColor: ['#E8A33D', '#3F7D5C', '#0B3D45', '#E85A4F']
+            }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+    });
+</script>
+{% endblock %}

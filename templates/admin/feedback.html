@@ -1,0 +1,41 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'feedback' %}
+{% block title %}Manage Feedback — Wayfarer & Co.{% endblock %}
+{% block page_title %}Manage Feedback{% endblock %}
+
+{% block admin_content %}
+<div class="wf-panel p-0">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4">Customer</th>
+                    <th>Tour</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Date</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fb in feedback_items %}
+                <tr>
+                    <td class="ps-4">{{ fb.user.name }}</td>
+                    <td>{{ fb.tour.name }}</td>
+                    <td class="text-warning">{% for i in range(fb.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}</td>
+                    <td style="max-width:320px;">{{ fb.comment[:120] }}{% if fb.comment|length > 120 %}…{% endif %}</td>
+                    <td>{{ fb.created_at.strftime('%b %d, %Y') }}</td>
+                    <td class="text-end pe-4">
+                        <form method="post" action="{{ url_for('admin.delete_feedback', feedback_id=fb.id) }}" onsubmit="return confirm('Delete this feedback?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-5">No feedback submitted yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

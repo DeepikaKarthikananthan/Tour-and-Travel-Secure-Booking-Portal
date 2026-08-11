@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}My Bookings — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow">My Account</div>
+        <h1>My Bookings</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            {% include "_account_sidebar.html" with context %}
+        </div>
+        <div class="col-lg-9">
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <a href="{{ url_for('bookings.my_bookings') }}" class="btn btn-sm {{ 'wf-btn-primary' if not status else 'wf-btn-outline' }}">All</a>
+                {% for s in ['Booked', 'Confirmed', 'Pending', 'Completed', 'Cancelled'] %}
+                <a href="{{ url_for('bookings.my_bookings', status=s) }}" class="btn btn-sm {{ 'wf-btn-primary' if status == s else 'wf-btn-outline' }}">{{ s }}</a>
+                {% endfor %}
+            </div>
+
+            <div class="wf-panel p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Booking ID</th>
+                                <th>Tour</th>
+                                <th>Destination</th>
+                                <th>Travel Date</th>
+                                <th>Travelers</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in bookings %}
+                            <tr>
+                                <td class="ps-4 wf-tour-dest">{{ b.reference }}</td>
+                                <td>{{ b.tour.name }}</td>
+                                <td>{{ b.tour.destination }}</td>
+                                <td>{{ b.travel_date.strftime('%b %d, %Y') }}</td>
+                                <td>{{ b.total_travelers() }}</td>
+                                <td>{{ b.total_amount|currency }}</td>
+                                <td><span class="badge bg-{{ b.status_badge_class() }} wf-badge-status">{{ b.status }}</span></td>
+                                <td class="text-end pe-4">
+                                    <a href="{{ url_for('bookings.booking_details', booking_id=b.id) }}" class="btn btn-sm wf-btn-outline">View</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="8" class="text-center py-5 text-muted">No bookings found.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {% if pagination.pages > 1 %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('bookings.my_bookings', page=pagination.prev_num, status=status) }}">Previous</a>
+                    </li>
+                    {% for p in pagination.iter_pages() %}
+                        {% if p %}
+                        <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('bookings.my_bookings', page=p, status=status) }}">{{ p }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('bookings.my_bookings', page=pagination.next_num, status=status) }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

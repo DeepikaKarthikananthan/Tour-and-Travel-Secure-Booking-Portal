@@ -1,0 +1,56 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'analytics' %}
+{% block title %}Analytics & Insights — Wayfarer & Co.{% endblock %}
+{% block page_title %}Analytics & Visual Insights{% endblock %}
+
+{% block admin_content %}
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="wf-panel p-4">
+            <h5 class="mb-3">Booking Distribution by Category</h5>
+            <canvas id="categoryChart" style="max-height: 280px;"></canvas>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="wf-panel p-4">
+            <h5 class="mb-3">Monthly Revenue Growth ($)</h5>
+            <canvas id="revenueChart" style="max-height: 280px;"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const labels = {{ labels|tojson }};
+    const data = {{ data|tojson }};
+
+    const ctx1 = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: ['#1a365d', '#276749', '#dd6b20', '#3182ce', '#805ad5']
+            }]
+        }
+    });
+
+    const ctx2 = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+            datasets: [{
+                label: 'Revenue ($)',
+                data: [14200, 28900, 34500, 48200, 60800, 72000],
+                backgroundColor: '#276749'
+            }]
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+<div class="wf-sidebar">
+    <div class="d-flex align-items-center gap-2 mb-3 pb-3" style="border-bottom: 1px solid var(--wf-sand-dark);">
+        <span class="wf-avatar" style="width:42px; height:42px; font-size:1.1rem;">{{ current_user.name[0]|upper }}</span>
+        <div>
+            <div class="fw-semibold">{{ current_user.name }}</div>
+            <small class="text-muted">{{ current_user.email }}</small>
+        </div>
+    </div>
+    <nav class="nav flex-column">
+        {% if current_user.is_admin() %}
+        <a class="nav-link text-danger fw-bold bg-danger bg-opacity-10 border border-danger rounded mb-2" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-shield-halved me-2"></i>Admin Control Panel</a>
+        {% endif %}
+        <a class="nav-link {% if active == 'dashboard' %}active{% endif %}" href="{{ url_for('profile.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
+        <a class="nav-link {% if active == 'profile' %}active{% endif %}" href="{{ url_for('profile.view_profile') }}"><i class="fa-solid fa-user me-2"></i>My Profile</a>
+        <a class="nav-link {% if active == 'passport' %}active{% endif %}" href="{{ url_for('api.user_passport') }}"><i class="fa-solid fa-passport me-2 text-warning"></i>Digital Passport</a>
+        <a class="nav-link {% if active == 'bookings' %}active{% endif %}" href="{{ url_for('bookings.my_bookings') }}"><i class="fa-solid fa-ticket me-2"></i>My Bookings</a>
+        <a class="nav-link {% if active == 'favorites' %}active{% endif %}" href="{{ url_for('profile.favorites') }}"><i class="fa-solid fa-heart me-2"></i>Favorites</a>
+        <a class="nav-link {% if active == 'feedback' %}active{% endif %}" href="{{ url_for('profile.feedback') }}"><i class="fa-solid fa-comment me-2"></i>Feedback</a>
+        <hr class="my-2">
+        <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a>
+    </nav>
+</div>

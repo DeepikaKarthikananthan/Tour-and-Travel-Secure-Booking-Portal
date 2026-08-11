@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmed — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="wf-panel p-5 text-center">
+                <div class="wf-feature-icon mx-auto mb-3" style="background: rgba(63,125,92,0.12); color: var(--wf-palm); width:72px; height:72px; font-size:1.8rem;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div class="wf-eyebrow">Booking {{ booking.reference }}</div>
+                <h2 class="mt-2 mb-3">Your booking has been submitted!</h2>
+                <p class="text-muted mb-4">We'll confirm your trip shortly. You can track its status anytime from your dashboard.</p>
+
+                <div class="wf-panel p-4 text-start" style="background: var(--wf-sand);">
+                    <div class="row gy-2">
+                        <div class="col-6 text-muted small">Booking ID</div>
+                        <div class="col-6 text-end fw-semibold">{{ booking.reference }}</div>
+                        <div class="col-6 text-muted small">Tour</div>
+                        <div class="col-6 text-end fw-semibold">{{ booking.tour.name }}</div>
+                        <div class="col-6 text-muted small">Destination</div>
+                        <div class="col-6 text-end fw-semibold">{{ booking.tour.destination }}</div>
+                        <div class="col-6 text-muted small">Travel Date</div>
+                        <div class="col-6 text-end fw-semibold">{{ booking.travel_date.strftime('%B %d, %Y') }}</div>
+                        <div class="col-6 text-muted small">Travelers</div>
+                        <div class="col-6 text-end fw-semibold">{{ booking.total_travelers() }}</div>
+                        <div class="col-6 text-muted small">Total Amount</div>
+                        <div class="col-6 text-end fw-semibold currency-convert" data-usd-price="{{ booking.total_amount }}">{{ booking.total_amount|currency }}</div>
+                        <div class="col-6 text-muted small">Status</div>
+                        <div class="col-6 text-end"><span class="badge bg-{{ booking.status_badge_class() }} wf-badge-status">{{ booking.status }}</span></div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 justify-content-center mt-4">
+                    <a href="{{ url_for('bookings.booking_details', booking_id=booking.id) }}" class="btn wf-btn-primary">View Booking</a>
+                    <a href="{{ url_for('profile.dashboard') }}" class="btn wf-btn-outline">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

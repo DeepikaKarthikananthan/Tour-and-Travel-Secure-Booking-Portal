@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Feedback — Wayfarer & Co.{% endblock %}
+
+{% block extra_css %}
+<style>
+.wf-star-rating { display: flex; gap: 0.35rem; font-size: 1.6rem; }
+.wf-star { color: #d9d2c3; cursor: pointer; transition: color 0.15s ease; }
+.wf-star.active { color: var(--wf-amber); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow">My Account</div>
+        <h1>Feedback</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            {% include "_account_sidebar.html" with context %}
+        </div>
+        <div class="col-lg-9">
+            <div class="wf-panel p-4 mb-4">
+                <h5 class="mb-4">Share Your Experience</h5>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Tour</label>
+                        <select name="tour_id" class="form-select" required>
+                            <option value="" disabled selected>Select a tour you booked</option>
+                            {% for tour in tours %}
+                            <option value="{{ tour.id }}">{{ tour.name }} — {{ tour.destination }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold d-block">Rating</label>
+                        <div class="wf-star-rating">
+                            <input type="hidden" name="rating" value="0">
+                            {% for i in range(5) %}
+                            <i class="fa-solid fa-star wf-star"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Comment</label>
+                        <textarea name="comment" class="form-control" rows="4" placeholder="Tell us about your trip..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn wf-btn-primary">Submit Feedback</button>
+                </form>
+            </div>
+
+            <div class="wf-panel p-4">
+                <h5 class="mb-3">Your Previous Feedback</h5>
+                {% for fb in my_feedback %}
+                <div class="py-2 {% if not loop.last %}border-bottom{% endif %}">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ fb.tour.name }}</strong>
+                        <span class="text-warning">{% for i in range(fb.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}</span>
+                    </div>
+                    <p class="text-muted small mb-0 mt-1">{{ fb.comment }}</p>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">You haven't submitted any feedback yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

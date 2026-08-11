@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Travel Safety & Health Advisories — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow text-warning"><i class="fa-solid fa-shield-virus me-1"></i> Health & Safety</div>
+        <h1>Travel Safety & Health Advisories</h1>
+        <p>Global health entry guidelines, vaccination mandates, and emergency travel advisories.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="wf-panel p-4 shadow-sm h-100">
+                <h4 class="mb-3 text-primary"><i class="fa-solid fa-syringe me-2"></i> Vaccination & Health Clearance</h4>
+                <p class="text-muted">Ensure all standard routine immunizations are up to date prior to international travel. Certain tropical destinations require Yellow Fever or Hepatitis clearance certificate upon arrival.</p>
+                <ul class="list-unstyled text-muted small">
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Carry physical and digital copies of vaccination records.</li>
+                    <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Pack a personal prescription medical kit with original pharmacy labels.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="wf-panel p-4 shadow-sm h-100">
+                <h4 class="mb-3 text-success"><i class="fa-solid fa-file-shield me-2"></i> Comprehensive Insurance Guidance</h4>
+                <p class="text-muted">Travel insurance is highly recommended for all international bookings. Wayfarer & Co. offers 1-click insurance coverage including 100% emergency hospitalization and flight cancellation protection.</p>
+                <a href="{{ url_for('api.assistance') }}" class="btn wf-btn-outline btn-sm">View 24/7 Assistance Directory</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

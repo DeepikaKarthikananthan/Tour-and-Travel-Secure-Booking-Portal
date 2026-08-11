@@ -1,0 +1,22 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'settings' %}
+{% block title %}Settings — Wayfarer & Co.{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block admin_content %}
+<div class="wf-panel p-4">
+    <h6 class="mb-3">Application Settings</h6>
+    <p class="text-muted small">
+        This is a local development build of the Travel &amp; Tour Booking System.
+        Application-wide settings (site name, currency, contact details, etc.) can be
+        wired up here as the project evolves. For now, configuration lives in
+        <code>config.py</code>.
+    </p>
+    <div class="row gy-2 small mt-3">
+        <div class="col-md-6 col-6 text-muted">Database</div>
+        <div class="col-md-6 col-6 text-end">SQLite (instance/travel.db)</div>
+        <div class="col-md-6 col-6 text-muted">Environment</div>
+        <div class="col-md-6 col-6 text-end">Local Development</div>
+    </div>
+</div>
+{% endblock %}

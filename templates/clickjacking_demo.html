@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Clickjacking Security Demo — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow text-warning"><i class="fa-solid fa-bug me-1"></i> Attack Demo #9</div>
+        <h1>Clickjacking & iFrame Embedding Simulation</h1>
+        <p>Demonstrating how <code>X-Frame-Options: SAMEORIGIN</code> prevents malicious iframe embedding.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="wf-panel p-4 shadow-sm mb-4">
+                <h4>Simulated Malicious Website (Embedding Wayfarer & Co. in <code>&lt;iframe&gt;</code>)</h4>
+                <p class="text-muted small mb-3">Below is an iframe trying to load <code>{{ request.host_url }}</code>. When Security Mode is <strong>OFF</strong>, the iframe renders successfully (Clickjacking Risk). When Security Mode is <strong>ON</strong>, the browser blocks the iframe due to <code>X-Frame-Options: SAMEORIGIN</code>.</p>
+
+                <div class="p-3 bg-dark text-white rounded mb-3 font-monospace small">
+                    Target Header Status: <strong>{% if security_mode == 'OFF' %}MISSING (Vulnerable to iFrame Framing){% else %}X-Frame-Options: SAMEORIGIN (Framing Blocked){% endif %}</strong>
+                </div>
+
+                <div class="border border-3 border-danger rounded overflow-hidden" style="height: 450px; position: relative; background: #f8d7da;">
+                    <div class="p-2 bg-danger text-white fw-bold small"><i class="fa-solid fa-user-ninja me-2"></i> Malicious Attacker Webpage (http://attacker-site.com)</div>
+                    <iframe src="{{ url_for('main.home') }}" style="width: 100%; height: 400px; border: none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

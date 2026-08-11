@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Book {{ tour.name }} — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow">Booking</div>
+        <h1>Book: {{ tour.name }}</h1>
+        <p>{{ tour.destination }} · {{ tour.duration }}</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="wf-panel p-4">
+                <h5 class="mb-4">Traveler Details</h5>
+                <form method="post" id="bookingForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Travel Date</label>
+                        <input type="date" name="travel_date" class="form-control" value="{{ form.get('travel_date','') }}" min="{{ tour.start_date }}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-semibold">Number of Adults</label>
+                            <input type="number" id="adults" name="adults" class="form-control" min="1" value="{{ form.get('adults', 1) }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-semibold">Number of Children</label>
+                            <input type="number" id="children" name="children" class="form-control" min="0" value="{{ form.get('children', 0) }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Contact Number</label>
+                        <input type="text" name="contact_number" class="form-control" value="{{ form.get('contact_number','') }}" placeholder="+1 555 123 4567" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Hotel Accommodation Tier</label>
+                        <select name="hotel_tier" class="form-select">
+                            <option value="Standard" selected>Standard 4-Star Partner Hotel (Included)</option>
+                            <option value="Deluxe">Deluxe 5-Star Hotel (+ $150 total)</option>
+                            <option value="5-Star Luxury">5-Star Ultra Luxury Resort (+ $300 total)</option>
+                        </select>
+                    </div>
+                    <div class="form-check p-3 mb-3 border rounded bg-light">
+                        <input class="form-check-input" type="checkbox" name="has_insurance" id="insuranceCheck" value="1">
+                        <label class="form-check-label fw-semibold" for="insuranceCheck">
+                            <i class="fa-solid fa-shield-halved text-success me-1"></i> Add Comprehensive Travel Insurance (+$39 per traveler)
+                        </label>
+                        <div class="small text-muted mt-1">Includes 100% Medical emergency coverage, trip cancellation refund, & luggage loss protection.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Promo / Discount Code</label>
+                        <input type="text" name="coupon_code" class="form-control text-uppercase" placeholder="e.g. WELCOME10, SUMMER20, EARLYBIRD">
+                        <div class="form-text">Try codes: <strong>WELCOME10</strong> (10% off), <strong>SUMMER20</strong> (20% off), <strong>EARLYBIRD</strong> (15% off)</div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Special Requests (optional)</label>
+                        <textarea name="special_requests" class="form-control" rows="3" placeholder="Dietary requirements, accessibility needs, etc.">{{ form.get('special_requests','') }}</textarea>
+                    </div>
+                    <button type="submit" class="btn wf-btn-primary w-100 py-3 fs-6"><i class="fa-solid fa-lock me-2"></i> Confirm & Secure Booking</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="wf-panel p-4" id="bookingSummary" data-adult-price="{{ tour.price }}" data-child-price="{{ tour.child_price }}">
+                <h5 class="mb-3">Booking Summary</h5>
+                <div class="d-flex align-items-center gap-3 mb-3 pb-3" style="border-bottom: 1px solid var(--wf-sand-dark);">
+                    <img src="{{ tour.image_url or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}" alt="{{ tour.name }}" style="width:70px; height:70px; object-fit:cover; border-radius:10px;">
+                    <div>
+                        <div class="fw-semibold">{{ tour.name }}</div>
+                        <small class="text-muted">{{ tour.destination }}</small>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between small mb-2">
+                    <span>Adults (<span id="sumAdults">1</span> × {{ tour.price|currency }})</span>
+                    <span id="sumAdultCost">{{ tour.price|currency }}</span>
+                </div>
+                <div class="d-flex justify-content-between small mb-2">
+                    <span>Children (<span id="sumChildren">0</span> × {{ tour.child_price|currency }})</span>
+                    <span id="sumChildCost">$0.00</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fw-semibold fs-5">
+                    <span>Total</span>
+                    <span id="sumTotal" class="wf-tour-price">{{ tour.price|currency }}</span>
+                </div>
+                <p class="text-muted small mt-3 mb-0"><i class="fa-solid fa-circle-info me-1"></i>{{ tour.available_seats }} seats currently available.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

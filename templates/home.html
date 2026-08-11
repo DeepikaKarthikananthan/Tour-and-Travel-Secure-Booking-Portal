@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}Wayfarer & Co. — Explore the World{% endblock %}
+
+{% block content %}
+
+<section class="wf-hero">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="wf-hero-eyebrow">Trip №0142 · Departing whenever you're ready</div>
+                <h1>Explore the World,<br><em>Create Memories</em></h1>
+                <p class="lead mt-3">Discover unforgettable destinations and book your perfect journey with ease.</p>
+
+                <div class="wf-route">
+                    <svg viewBox="0 0 500 60" preserveAspectRatio="none">
+                        <path class="wf-route-path" d="M10,45 C150,10 350,10 490,45"></path>
+                        <circle class="wf-route-dot" cx="10" cy="45" r="5"></circle>
+                        <circle class="wf-route-dot" cx="490" cy="45" r="5"></circle>
+                    </svg>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('tours.list_tours') }}" class="btn wf-btn-primary btn-lg">Explore Tours</a>
+                    <a href="{{ url_for('tours.list_tours') }}" class="btn wf-btn-light btn-lg">Book Your Trip</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <form action="{{ url_for('tours.list_tours') }}" method="get" class="wf-search-card">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="q" class="form-label">Destination</label>
+                <input type="text" class="form-control" id="q" name="q" placeholder="Where do you want to go?">
+            </div>
+            <div class="col-md-3">
+                <label for="date" class="form-label">Travel Date</label>
+                <input type="date" class="form-control" id="date" name="date">
+            </div>
+            <div class="col-md-3">
+                <label for="travelers" class="form-label">Travelers</label>
+                <select class="form-select" id="travelers" name="travelers">
+                    <option value="1">1 Traveler</option>
+                    <option value="2" selected>2 Travelers</option>
+                    <option value="3">3 Travelers</option>
+                    <option value="4">4+ Travelers</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn wf-btn-primary w-100"><i class="fa-solid fa-magnifying-glass me-1"></i> Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<section class="wf-section wf-section-white">
+    <div class="container">
+        <div class="wf-section-head">
+            <div class="wf-eyebrow">Popular Destinations</div>
+            <h2>Where travelers are headed</h2>
+            <p>A handful of the destinations our guests fall in love with, again and again.</p>
+        </div>
+        <div class="row g-4">
+            {% for name, image in destinations %}
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('tours.list_tours', destination=name) }}" class="wf-dest-card">
+                    <img src="{{ image or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}" alt="{{ name }}" loading="lazy">
+                    <span class="wf-dest-card-label">{{ name }}</span>
+                </a>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">Destinations will appear here once tours are added.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-sand">
+    <div class="container">
+        <div class="wf-section-head">
+            <div class="wf-eyebrow">Featured Packages</div>
+            <h2>Hand-picked tours for every kind of traveler</h2>
+            <p>From beach escapes to mountain adventures, find a journey that fits your pace.</p>
+        </div>
+        <div class="row g-4">
+            {% for tour in featured_tours %}
+            <div class="col-lg-4 col-md-6">
+                <div class="wf-tour-card">
+                    <div class="wf-tour-img-wrap">
+                        <img src="{{ tour.image_url or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}" alt="{{ tour.name }}" loading="lazy">
+                        <span class="wf-tour-badge">{{ tour.category }}</span>
+                        <span class="wf-tour-rating"><i class="fa-solid fa-star text-warning"></i> {{ tour.average_rating() }}</span>
+                    </div>
+                    <div class="wf-tour-body">
+                        <div class="wf-tour-dest"><i class="fa-solid fa-location-dot me-1"></i>{{ tour.destination }}</div>
+                        <h3 class="wf-tour-title">{{ tour.name }}</h3>
+                        <p class="wf-tour-meta mb-3"><i class="fa-regular fa-clock me-1"></i>{{ tour.duration }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="wf-tour-price">{{ tour.price|currency }}<small> / person</small></div>
+                            <a href="{{ url_for('tours.tour_details', tour_id=tour.id) }}" class="btn wf-btn-outline btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="wf-empty-state">
+                    <i class="fa-solid fa-suitcase-rolling"></i>
+                    <p>No tour packages yet. Run <code>python seed.py</code> to add sample data.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('tours.list_tours') }}" class="btn wf-btn-primary">View All Tours</a>
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-white">
+    <div class="container">
+        <div class="wf-section-head">
+            <div class="wf-eyebrow">Why Choose Us</div>
+            <h2>Planning made simple, journeys made memorable</h2>
+        </div>
+        <div class="row g-4 text-center text-md-start">
+            <div class="col-md-3 col-6">
+                <div class="wf-feature-icon"><i class="fa-solid fa-tags"></i></div>
+                <h5>Best Price Guarantee</h5>
+                <p class="text-muted small">Transparent pricing with no hidden fees, ever.</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="wf-feature-icon"><i class="fa-solid fa-headset"></i></div>
+                <h5>24/7 Support</h5>
+                <p class="text-muted small">Our travel experts are always a message away.</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="wf-feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h5>Secure Booking</h5>
+                <p class="text-muted small">Your data and payments are always protected.</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="wf-feature-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                <h5>Curated Itineraries</h5>
+                <p class="text-muted small">Every route is planned by people who've been there.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-sand">
+    <div class="container">
+        <div class="wf-section-head">
+            <div class="wf-eyebrow">Testimonials</div>
+            <h2>Stories from the road</h2>
+        </div>
+        <div class="row g-4">
+            {% for t in testimonials %}
+            <div class="col-md-4">
+                <div class="wf-testimonial">
+                    <div class="stars">
+                        {% for i in range(t.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                    </div>
+                    <p class="mb-0">"{{ t.comment }}"</p>
+                    <div class="wf-testimonial-author">{{ t.user.name }}</div>
+                    <small class="text-muted">{{ t.tour.name }}</small>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="wf-empty-state">
+                    <i class="fa-regular fa-comments"></i>
+                    <p>No testimonials yet — be the first to leave feedback after your trip!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-white">
+    <div class="container">
+        <div class="wf-cta">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="text-white mb-2">Ready for your next adventure?</h2>
+                    <p class="mb-lg-0" style="color: rgba(255,255,255,0.85);">Browse our full catalog of tours and lock in your travel dates today.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <a href="{{ url_for('tours.list_tours') }}" class="btn wf-btn-light btn-lg">Start Exploring</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

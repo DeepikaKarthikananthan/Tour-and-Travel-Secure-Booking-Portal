@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Referral Program — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow text-warning"><i class="fa-solid fa-gift me-1"></i> Give $25, Get 50 Points</div>
+        <h1>Invite Friends & Earn Travel Rewards</h1>
+        <p>Share your unique referral code with fellow travelers. When they book, both of you get rewarded!</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="wf-panel p-5 text-center shadow-sm">
+                <div class="wf-feature-icon mx-auto mb-4" style="background: rgba(230,126,34,0.12); color: var(--wf-coral); width:90px; height:90px; font-size:2.5rem;">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <h3>Your Personal Referral Code</h3>
+                <p class="text-muted">Friends get <strong>$25 OFF</strong> their first booking using your code. You earn <strong>50 Bonus Reward Points</strong>!</p>
+
+                <div class="p-3 bg-light rounded border d-flex justify-content-between align-items-center mb-4">
+                    <span class="fs-4 fw-bold font-monospace text-primary" id="refCode">{{ user.referral_code }}</span>
+                    <button onclick="navigator.clipboard.writeText('{{ user.referral_code }}'); alert('Referral code copied to clipboard!');" class="btn wf-btn-outline btn-sm"><i class="fa-solid fa-copy me-1"></i> Copy Code</button>
+                </div>
+
+                <div class="row g-3 text-start mt-3">
+                    <div class="col-6">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted fw-semibold">Current Points</div>
+                            <div class="fs-3 fw-bold text-success">{{ user.reward_points }} pts</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted fw-semibold">Successful Referrals</div>
+                            <div class="fs-3 fw-bold text-primary">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

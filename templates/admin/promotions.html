@@ -1,0 +1,67 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'promotions' %}
+{% block title %}Manage Promotions — Wayfarer & Co.{% endblock %}
+{% block page_title %}Promotions & Campaigns{% endblock %}
+
+{% block admin_content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="wf-panel p-4">
+            <h5 class="mb-3">Create Promo Campaign</h5>
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Campaign Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Autumn Gateway Sale" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Banner Announcement Text</label>
+                    <input type="text" name="banner_text" class="form-control" placeholder="e.g. Get 15% off all Autumn Europe tours!">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Discount Percent (%)</label>
+                    <input type="number" step="0.5" name="discount_percent" class="form-control" value="15.0" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Promo Code</label>
+                    <input type="text" name="promo_code" class="form-control text-uppercase" placeholder="e.g. AUTUMN15" required>
+                </div>
+                <button type="submit" class="btn wf-btn-primary w-100"><i class="fa-solid fa-plus me-1"></i> Launch Campaign</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="wf-panel p-0">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Title</th>
+                            <th>Promo Code</th>
+                            <th>Discount</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in promos %}
+                        <tr>
+                            <td class="ps-4 fw-bold">
+                                {{ p.title }}
+                                <div class="small text-muted">{{ p.banner_text or '' }}</div>
+                            </td>
+                            <td><code>{{ p.promo_code }}</code></td>
+                            <td class="fw-bold text-success">{{ p.discount_percent }}% OFF</td>
+                            <td><span class="badge bg-success">Active</span></td>
+                            <td class="small text-muted">{{ p.created_at.strftime('%b %d, %Y') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center py-5 text-muted">No promotional campaigns created yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

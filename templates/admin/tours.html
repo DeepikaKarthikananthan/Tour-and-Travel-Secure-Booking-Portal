@@ -1,0 +1,74 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'tours' %}
+{% block title %}Manage Tours — Wayfarer & Co.{% endblock %}
+{% block page_title %}Manage Tours{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <form method="get" class="d-flex gap-2">
+        <input type="text" name="q" class="form-control" placeholder="Search tours..." value="{{ search }}" style="width:260px;">
+        <button type="submit" class="btn wf-btn-outline btn-sm">Search</button>
+    </form>
+    <a href="{{ url_for('admin.add_tour') }}" class="btn wf-btn-primary"><i class="fa-solid fa-plus me-1"></i>Add Tour</a>
+</div>
+
+<div class="wf-panel p-0">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4">Tour</th>
+                    <th>Destination</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Seats</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tour in tours %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="{{ tour.image_url or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;">
+                            <span class="fw-semibold">{{ tour.name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ tour.destination }}</td>
+                    <td>{{ tour.category }}</td>
+                    <td>{{ tour.price|currency }}</td>
+                    <td>{{ tour.available_seats }}</td>
+                    <td>
+                        {% if tour.is_active %}
+                        <span class="badge bg-success wf-badge-status">Active</span>
+                        {% else %}
+                        <span class="badge bg-secondary wf-badge-status">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <a href="{{ url_for('tours.tour_details', tour_id=tour.id) }}" class="btn btn-sm btn-outline-secondary" title="View"><i class="fa-solid fa-eye"></i></a>
+                            <a href="{{ url_for('admin.edit_tour', tour_id=tour.id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                            <form method="post" action="{{ url_for('admin.clone_tour', tour_id=tour.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-info" title="Clone Package"><i class="fa-solid fa-copy"></i></button>
+                            </form>
+                            <form method="post" action="{{ url_for('admin.toggle_tour', tour_id=tour.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Toggle Active">
+                                    <i class="fa-solid fa-power-off"></i>
+                                </button>
+                            </form>
+                            <form method="post" action="{{ url_for('admin.delete_tour', tour_id=tour.id) }}" onsubmit="return confirm('Delete this tour permanently?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-5">No tours found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

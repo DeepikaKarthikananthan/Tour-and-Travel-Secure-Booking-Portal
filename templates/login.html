@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Log In — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-auth-wrap">
+    <div class="container">
+        <div class="wf-auth-card">
+            <div class="text-center mb-4">
+                <div class="wf-eyebrow">Welcome Back</div>
+                <h2 class="mt-1">Log in to your account</h2>
+            </div>
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Email Address</label>
+                    <input type="email" name="email" class="form-control" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                        <label class="form-check-label small" for="remember">Remember me</label>
+                    </div>
+                    <a href="{{ url_for('auth.forgot_password') }}" class="small">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn wf-btn-primary w-100">Log In</button>
+            </form>
+            <p class="text-center small text-muted mt-4 mb-0">
+                Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Contact Us — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow">Get In Touch</div>
+        <h1>We'd love to hear from you</h1>
+        <p>Questions about a trip, a booking, or just want to say hi?</p>
+    </div>
+</div>
+
+<section class="wf-section wf-section-white">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <div class="wf-panel p-4">
+                    <h5 class="mb-4">Send Us a Message</h5>
+                    <form method="post">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Full Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email Address</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Subject</label>
+                            <input type="text" name="subject" class="form-control">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold">Message</label>
+                            <textarea name="message" class="form-control" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn wf-btn-primary w-100">Send Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="wf-panel p-4 h-100">
+                            <div class="wf-feature-icon" style="width:44px;height:44px;font-size:1rem;"><i class="fa-solid fa-envelope"></i></div>
+                            <h6 class="mb-1">Email</h6>
+                            <p class="text-muted small mb-0">hello@wayfarerco.example</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="wf-panel p-4 h-100">
+                            <div class="wf-feature-icon" style="width:44px;height:44px;font-size:1rem;"><i class="fa-solid fa-phone"></i></div>
+                            <h6 class="mb-1">Phone</h6>
+                            <p class="text-muted small mb-0">+1 (800) 555-0199</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="wf-panel p-4 h-100">
+                            <div class="wf-feature-icon" style="width:44px;height:44px;font-size:1rem;"><i class="fa-solid fa-location-dot"></i></div>
+                            <h6 class="mb-1">Office</h6>
+                            <p class="text-muted small mb-0">221B Voyager Lane, Harbor City</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="wf-panel p-4 h-100">
+                            <div class="wf-feature-icon" style="width:44px;height:44px;font-size:1rem;"><i class="fa-solid fa-clock"></i></div>
+                            <h6 class="mb-1">Business Hours</h6>
+                            <p class="text-muted small mb-0">Mon–Fri: 9AM–7PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wf-panel p-4">
+                    <h6 class="mb-3">Frequently Asked Questions</h6>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">How do I cancel a booking?</button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted small">Head to "My Bookings" in your dashboard, open the booking, and select "Cancel Booking" if it's still Pending or Confirmed.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">When will my booking be confirmed?</button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted small">Our team reviews new bookings and updates their status within 24–48 hours.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">Can I change my travel date?</button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted small">Reach out via the contact form above and our support team will help you reschedule where possible.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

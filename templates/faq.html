@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Frequently Asked Questions — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow"><i class="fa-solid fa-circle-question me-1"></i> Knowledge Base</div>
+        <h1>Help & Frequently Asked Questions</h1>
+        <p>Find answers regarding bookings, cancellations, payments, visa requirements, and safety.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="accordion custom-accordion" id="faqAccordion">
+                <div class="accordion-item mb-3 border rounded shadow-sm">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                            How do I change or cancel my tour booking?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            You can cancel any upcoming booking directly from your <strong>My Bookings</strong> page or <strong>Booking Details</strong> screen prior to your travel date. Once cancelled, reserved seats are immediately restored and a cancellation confirmation is logged.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-3 border rounded shadow-sm">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                            What promo codes and discounts are available?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            You can apply active promo codes like <code>WELCOME10</code> (10% off), <code>SUMMER20</code> (20% off), <code>EARLYBIRD</code> (15% off), or <code>WAYFARER15</code> directly on the booking checkout page to receive instant discounts.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-3 border rounded shadow-sm">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                            How do Wayfarer Reward Points work?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            Every registered traveler earns <strong>1 Reward Point for every $10 spent</strong> on completed journeys. You can track your points and unlock digital achievement badges in your <strong>Digital Passport</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-3 border rounded shadow-sm">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                            Is travel insurance included in my package?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            You can opt to add Comprehensive Travel Insurance during checkout for $39 per traveler. It provides trip interruption, emergency medical, and luggage protection.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

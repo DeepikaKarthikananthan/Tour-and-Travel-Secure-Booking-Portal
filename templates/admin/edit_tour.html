@@ -1,0 +1,89 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'tours' %}
+{% block title %}Edit Tour — Wayfarer & Co.{% endblock %}
+{% block page_title %}Edit Tour Package{% endblock %}
+
+{% block admin_content %}
+{% set f = form if form else tour %}
+<div class="wf-panel p-4">
+    <form method="post">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Tour Name</label>
+                <input type="text" name="name" class="form-control" value="{{ f.name if form is none else form.get('name','') }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Destination</label>
+                <input type="text" name="destination" class="form-control" value="{{ f.destination if form is none else form.get('destination','') }}" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label small fw-semibold">Category</label>
+                <input type="text" name="category" class="form-control" value="{{ f.category if form is none else form.get('category','') }}">
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label small fw-semibold">Duration</label>
+                <input type="text" name="duration" class="form-control" value="{{ f.duration if form is none else form.get('duration','') }}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label small fw-semibold">Available Seats</label>
+                <input type="number" name="available_seats" class="form-control" min="0" value="{{ f.available_seats if form is none else form.get('available_seats',0) }}" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label small fw-semibold">Adult Price ($)</label>
+                <input type="number" step="0.01" name="price" class="form-control" min="0" value="{{ f.price if form is none else form.get('price','') }}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label small fw-semibold">Child Price ($)</label>
+                <input type="number" step="0.01" name="child_price" class="form-control" min="0" value="{{ f.child_price if form is none else form.get('child_price', 0) }}">
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label small fw-semibold">Image URL</label>
+                <input type="text" name="image_url" class="form-control" value="{{ f.image_url if form is none else form.get('image_url','') }}">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Start Date</label>
+                <input type="date" name="start_date" class="form-control" value="{{ tour.start_date if form is none else form.get('start_date','') }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">End Date</label>
+                <input type="date" name="end_date" class="form-control" value="{{ tour.end_date if form is none else form.get('end_date','') }}">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label small fw-semibold">Description</label>
+            <textarea name="description" class="form-control" rows="3">{{ f.description if form is none else form.get('description','') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label small fw-semibold">Itinerary (one line per day)</label>
+            <textarea name="itinerary" class="form-control" rows="4">{{ f.itinerary if form is none else form.get('itinerary','') }}</textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Included Services (one per line)</label>
+                <textarea name="included" class="form-control" rows="3">{{ f.included if form is none else form.get('included','') }}</textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Excluded Services (one per line)</label>
+                <textarea name="excluded" class="form-control" rows="3">{{ f.excluded if form is none else form.get('excluded','') }}</textarea>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn wf-btn-primary">Save Changes</button>
+            <a href="{{ url_for('admin.manage_tours') }}" class="btn wf-btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

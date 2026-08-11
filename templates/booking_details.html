@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Booking {{ booking.reference }} — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow">Booking Details</div>
+        <h1>{{ booking.reference }}</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="wf-panel p-4 mb-4">
+                <h5 class="mb-3">Tour Information</h5>
+                <div class="d-flex gap-3">
+                    <img src="{{ booking.tour.image_url or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}" style="width:100px;height:100px;object-fit:cover;border-radius:10px;">
+                    <div>
+                        <a href="{{ url_for('tours.tour_details', tour_id=booking.tour.id) }}" class="fw-semibold fs-5">{{ booking.tour.name }}</a>
+                        <div class="text-muted small"><i class="fa-solid fa-location-dot me-1"></i>{{ booking.tour.destination }}</div>
+                        <div class="text-muted small"><i class="fa-regular fa-clock me-1"></i>{{ booking.tour.duration }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wf-panel p-4 mb-4">
+                <h5 class="mb-3">Customer Information</h5>
+                <div class="row gy-2">
+                    <div class="col-6 text-muted small">Name</div>
+                    <div class="col-6 text-end">{{ booking.user.name }}</div>
+                    <div class="col-6 text-muted small">Email</div>
+                    <div class="col-6 text-end">{{ booking.user.email }}</div>
+                    <div class="col-6 text-muted small">Contact Number</div>
+                    <div class="col-6 text-end">{{ booking.contact_number or '—' }}</div>
+                </div>
+            </div>
+
+            {% if booking.special_requests %}
+            <div class="wf-panel p-4">
+                <h5 class="mb-2">Special Requests</h5>
+                <p class="text-muted mb-0">{{ booking.special_requests }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="wf-panel p-4">
+                <h5 class="mb-3">Summary</h5>
+                <div class="row gy-2 small">
+                    <div class="col-6 text-muted">Travel Date</div>
+                    <div class="col-6 text-end">{{ booking.travel_date.strftime('%b %d, %Y') }}</div>
+                    <div class="col-6 text-muted">Adults</div>
+                    <div class="col-6 text-end">{{ booking.adults }}</div>
+                    <div class="col-6 text-muted">Children</div>
+                    <div class="col-6 text-end">{{ booking.children }}</div>
+                    {% if booking.has_insurance %}
+                    <div class="col-6 text-muted">Insurance</div>
+                    <div class="col-6 text-end text-success"><i class="fa-solid fa-circle-check me-1"></i>Included</div>
+                    {% endif %}
+                    {% if booking.hotel_tier %}
+                    <div class="col-6 text-muted">Hotel Tier</div>
+                    <div class="col-6 text-end fw-semibold">{{ booking.hotel_tier }}</div>
+                    {% endif %}
+                    {% if booking.discount_amount > 0 %}
+                    <div class="col-6 text-muted">Discount Applied</div>
+                    <div class="col-6 text-end text-success">-${{ "%.2f"|format(booking.discount_amount) }} ({{ booking.coupon_code }})</div>
+                    {% endif %}
+                    <div class="col-6 text-muted">Total Amount</div>
+                    <div class="col-6 text-end fw-semibold currency-convert" data-usd-price="{{ booking.total_amount }}">{{ booking.total_amount|currency }}</div>
+                    <div class="col-6 text-muted">Status</div>
+                    <div class="col-6 text-end"><span class="badge bg-{{ booking.status_badge_class() }} wf-badge-status">{{ booking.status }}</span></div>
+                    {% if booking.refund_status and booking.refund_status != 'None' %}
+                    <div class="col-6 text-muted">Refund Status</div>
+                    <div class="col-6 text-end text-{% if booking.refund_status == 'Refunded' %}success{% else %}warning{% endif %} fw-semibold">
+                        {{ booking.refund_status }} (<span class="currency-convert" data-usd-price="{{ booking.refund_amount }}">${{ "%.2f"|format(booking.refund_amount) }}</span>)
+                    </div>
+                    {% endif %}
+                    <div class="col-6 text-muted">Booked On</div>
+                    <div class="col-6 text-end">{{ booking.created_at.strftime('%b %d, %Y') }}</div>
+                </div>
+
+                {% if booking.refund_status == 'Refunded' %}
+                <div class="alert alert-success border-success mt-4 mb-3 rounded p-3">
+                    <div class="d-flex align-items-center mb-1">
+                        <i class="fa-solid fa-circle-check text-success fs-5 me-2"></i>
+                        <strong class="text-success">Refund Approved & Processed</strong>
+                    </div>
+                    <div class="small text-muted mb-1">A full refund of <strong class="currency-convert" data-usd-price="{{ booking.refund_amount }}">${{ "%.2f"|format(booking.refund_amount) }}</strong> has been credited to your payment method.</div>
+                    {% if booking.admin_refund_note %}
+                    <div class="small bg-white p-2 border rounded mt-2 text-dark"><strong>Admin Confirmation Note:</strong> {{ booking.admin_refund_note }}</div>
+                    {% endif %}
+                </div>
+                {% elif booking.refund_status == 'Refund Requested' or booking.refund_status == 'Pending Refund' %}
+                <div class="alert alert-warning border-warning mt-4 mb-3 rounded p-3">
+                    <div class="d-flex align-items-center mb-1">
+                        <i class="fa-solid fa-clock text-warning fs-5 me-2"></i>
+                        <strong>Refund Request Under Review</strong>
+                    </div>
+                    <div class="small text-muted">Your refund request for <span class="currency-convert" data-usd-price="{{ booking.refund_amount }}">${{ "%.2f"|format(booking.refund_amount) }}</span> is currently being processed by our admin finance team.</div>
+                </div>
+                {% endif %}
+
+                <a href="{{ url_for('api.booking_invoice', booking_id=booking.id) }}" target="_blank" class="btn wf-btn-outline w-100 mt-2 mb-2"><i class="fa-solid fa-file-invoice me-2"></i>Download Receipt / Invoice</a>
+
+                {% if booking.status == 'Cancelled' and booking.refund_status == 'None' %}
+                <form method="post" action="{{ url_for('bookings.request_refund', booking_id=booking.id) }}" class="mt-3">
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Reason for Refund Request</label>
+                        <input type="text" name="reason" class="form-control form-control-sm" placeholder="e.g. Schedule conflict, cancelled trip">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 font-semibold"><i class="fa-solid fa-hand-holding-dollar me-1"></i> Request Refund from Admin</button>
+                </form>
+                {% elif booking.is_cancellable() %}
+                <form method="post" action="{{ url_for('bookings.cancel_booking', booking_id=booking.id) }}" class="mt-2" onsubmit="return confirm('Are you sure you want to cancel this booking and request a refund?');">
+                    <button type="submit" class="btn btn-outline-danger w-100">Cancel Booking & Request Refund</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

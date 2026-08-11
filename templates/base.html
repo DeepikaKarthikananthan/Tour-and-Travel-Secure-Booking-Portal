@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wayfarer & Co. — Travel & Tours{% endblock %}</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg wf-navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand wf-brand" href="{{ url_for('main.home') }}">
+            <span class="wf-brand-mark"><i class="fa-solid fa-route"></i></span>
+            Wayfarer<span class="wf-brand-dot">&amp;</span>Co.
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.home') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('tours.list_tours') }}">Tours</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('tools.vacation_quiz') }}"><i class="fa-solid fa-sparkles text-warning me-1"></i>Vacation Quiz</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('api.compare_tours') }}">Compare</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('api.custom_trip') }}">Custom Trip</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Travel Tools</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('tools.expense_calculator') }}"><i class="fa-solid fa-calculator me-2"></i>Trip Budget Calculator</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('tools.packing_checklist') }}"><i class="fa-solid fa-clipboard-check me-2"></i>Smart Packing Checklist</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('tools.safety_advisories') }}"><i class="fa-solid fa-shield-virus me-2"></i>Health & Safety Guidelines</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('api.faq') }}"><i class="fa-solid fa-circle-question me-2"></i>FAQ Center</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav align-items-lg-center gap-lg-2">
+                <!-- Security Demo Mode Toggle -->
+                <li class="nav-item me-lg-1">
+                    {% if security_mode == 'OFF' %}
+                    <a href="{{ url_for('main.toggle_security') }}" class="btn btn-sm btn-warning py-1 fw-bold text-dark shadow-sm" title="Click to ENABLE Security Mode (Secured)">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i> Security: OFF (Vulnerable)
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('main.toggle_security') }}" class="btn btn-sm btn-success py-1 fw-semibold shadow-sm" title="Click to DISABLE Security Mode (Lab Demo)">
+                        <i class="fa-solid fa-shield-halved me-1"></i> Security: ON (Secured)
+                    </a>
+                    {% endif %}
+                </li>
+
+                <!-- Theme Mode Toggle -->
+                <li class="nav-item me-lg-1">
+                    <button class="btn btn-sm btn-outline-secondary py-1" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </li>
+
+                <!-- Currency Selector Dropdown -->
+                <li class="nav-item dropdown me-lg-2">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle py-1" type="button" data-bs-toggle="dropdown" id="currencyBtn">
+                        <i class="fa-solid fa-coins me-1"></i> USD ($)
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item currency-select" href="#" data-currency="USD">USD ($)</a></li>
+                        <li><a class="dropdown-item currency-select" href="#" data-currency="EUR">EUR (€)</a></li>
+                        <li><a class="dropdown-item currency-select" href="#" data-currency="GBP">GBP (£)</a></li>
+                        <li><a class="dropdown-item currency-select" href="#" data-currency="INR">INR (₹)</a></li>
+                        <li><a class="dropdown-item currency-select" href="#" data-currency="AUD">AUD (A$)</a></li>
+                        <li><a class="dropdown-item currency-select" href="#" data-currency="CAD">CAD (C$)</a></li>
+                        <li><a class="dropdown-item currency-select" href="#" data-currency="JPY">JPY (¥)</a></li>
+                    </ul>
+                </li>
+
+                {% if current_user %}
+                {% if current_user.is_admin() %}
+                <li class="nav-item">
+                    <a class="btn btn-sm btn-danger me-lg-2 py-1 px-3 fw-semibold shadow-sm" href="{{ url_for('admin.dashboard') }}">
+                        <i class="fa-solid fa-shield-halved me-1"></i> Admin Panel
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle wf-user-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <span class="wf-avatar">{{ current_user.name[0]|upper }}</span>
+                        {{ current_user.name.split(' ')[0] }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        {% if current_user.is_admin() %}
+                        <li><a class="dropdown-item fw-bold text-danger" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-shield-halved me-2"></i>Admin Control Panel</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        {% endif %}
+                        <li><a class="dropdown-item" href="{{ url_for('profile.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('bookings.my_bookings') }}"><i class="fa-solid fa-ticket me-2"></i>My Bookings</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('tools.referral_program') }}"><i class="fa-solid fa-gift me-2 text-warning"></i>Invite & Earn $25</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('api.user_passport') }}"><i class="fa-solid fa-passport me-2 text-warning"></i>Digital Passport</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('profile.view_profile') }}"><i class="fa-solid fa-user me-2"></i>My Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a></li>
+                <li class="nav-item"><a class="btn wf-btn-primary btn-sm ms-lg-2" href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="wf-flash-wrap">
+    {% if security_mode == 'OFF' %}
+    <div class="bg-warning text-dark py-2 px-3 text-center fw-bold shadow-sm border-bottom border-dark">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i> SECURITY LAB DEMO MODE ACTIVE — Security Controls DISABLED (Vulnerabilities Executable for Exam Demo)
+        <a href="{{ url_for('main.toggle_security') }}" class="btn btn-dark btn-sm ms-3 py-0 px-2 fw-normal">Enable Security Controls</a>
+    </div>
+    {% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container pt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'danger' else category }} alert-dismissible fade show wf-alert" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="wf-footer">
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-lg-4">
+                <a class="wf-brand wf-brand-footer" href="{{ url_for('main.home') }}">
+                    <span class="wf-brand-mark"><i class="fa-solid fa-route"></i></span>
+                    Wayfarer<span class="wf-brand-dot">&amp;</span>Co.
+                </a>
+                <p class="wf-footer-tagline">Journeys plotted with care, since day one. We help travelers turn maps into memories.</p>
+                <div class="wf-social">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-6">
+                <h6 class="wf-footer-heading">Explore</h6>
+                <ul class="wf-footer-links">
+                    <li><a href="{{ url_for('tours.list_tours') }}">All Tours</a></li>
+                    <li><a href="{{ url_for('main.about') }}">About Us</a></li>
+                    <li><a href="{{ url_for('main.contact') }}">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-2 col-6">
+                <h6 class="wf-footer-heading">Account</h6>
+                <ul class="wf-footer-links">
+                    <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                    <li><a href="{{ url_for('admin.login') }}">Admin Portal</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4">
+                <h6 class="wf-footer-heading">Get in touch</h6>
+                <ul class="wf-footer-links">
+                    <li><i class="fa-solid fa-location-dot me-2"></i>221B Voyager Lane, Harbor City</li>
+                    <li><i class="fa-solid fa-phone me-2"></i>+1 (800) 555-0199</li>
+                    <li><i class="fa-solid fa-envelope me-2"></i>hello@wayfarerco.example</li>
+                </ul>
+            </div>
+        </div>
+        <hr class="wf-footer-rule">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+            <small>&copy; {{ 2026 }} Wayfarer &amp; Co. All rights reserved.</small>
+            <small>Built for local development &amp; learning purposes.</small>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

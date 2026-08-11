@@ -1,0 +1,31 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'subscribers' %}
+{% block title %}Newsletter Subscribers — Wayfarer & Co.{% endblock %}
+{% block page_title %}Newsletter Subscribers{% endblock %}
+
+{% block admin_content %}
+<div class="wf-panel p-0">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4">Subscriber ID</th>
+                    <th>Email Address</th>
+                    <th>Subscribed Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in subscribers %}
+                <tr>
+                    <td class="ps-4 fw-bold">#{{ s.id }}</td>
+                    <td class="fw-semibold">{{ s.email }}</td>
+                    <td class="text-muted">{{ s.subscribed_at.strftime('%B %d, %Y %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="text-center py-5 text-muted">No newsletter subscribers yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

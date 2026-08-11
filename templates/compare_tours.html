@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Compare Packages — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow"><i class="fa-solid fa-code-compare me-1"></i> Comparison Tool</div>
+        <h1>Compare Tour Packages Side-by-Side</h1>
+        <p>Evaluate prices, durations, ratings, and inclusions to pick your ideal trip.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle bg-white shadow-sm rounded">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 200px;">Features</th>
+                    {% for tour in tours %}
+                    <th class="text-center" style="min-width: 260px;">
+                        <img src="{{ tour.image_url }}" style="height: 120px; width:100%; object-fit:cover; border-radius:8px;" class="mb-2">
+                        <h5>{{ tour.name }}</h5>
+                        <a href="{{ url_for('tours.tour_details', tour_id=tour.id) }}" class="btn btn-sm wf-btn-primary mt-1">View Tour</a>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-semibold">Destination</td>
+                    {% for tour in tours %}
+                    <td class="text-center">{{ tour.destination }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Price per Adult</td>
+                    {% for tour in tours %}
+                    <td class="text-center fs-5 fw-bold text-success">{{ tour.price|currency }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Child Price</td>
+                    {% for tour in tours %}
+                    <td class="text-center">{{ tour.child_price|currency }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Duration</td>
+                    {% for tour in tours %}
+                    <td class="text-center">{{ tour.duration }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Rating</td>
+                    {% for tour in tours %}
+                    <td class="text-center"><i class="fa-solid fa-star text-warning"></i> {{ tour.average_rating() }} / 5.0</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Available Seats</td>
+                    {% for tour in tours %}
+                    <td class="text-center"><span class="badge bg-info">{{ tour.available_seats }} seats left</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Inclusions</td>
+                    {% for tour in tours %}
+                    <td class="small text-muted text-start" style="white-space: pre-line;">{{ tour.included }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

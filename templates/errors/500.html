@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Server Error — Wayfarer & Co.{% endblock %}
+{% block content %}
+<div class="wf-error-page">
+    <div>
+        <div class="wf-error-code">500</div>
+        <h2 class="mb-2">Something went wrong on our end</h2>
+        <p class="text-muted mb-4">Our team has been notified. Please try again in a moment.</p>
+        <a href="{{ url_for('main.home') }}" class="btn wf-btn-primary">Back to Home</a>
+    </div>
+</div>
+{% endblock %}

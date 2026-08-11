@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Tailor-Made Custom Trip — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Custom Itinerary</div>
+        <h1>Plan Your Tailor-Made Journey</h1>
+        <p>Tell us your dream destination, budget, and travel style — our specialists will craft a bespoke itinerary just for you.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="wf-panel p-5">
+                <form method="post">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name *</label>
+                            <input type="text" class="form-control" name="name" value="{{ user.name if user else '' }}" required placeholder="e.g. Eleanor Vance">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email Address *</label>
+                            <input type="email" class="form-control" name="email" value="{{ user.email if user else '' }}" required placeholder="e.g. eleanor@example.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" value="{{ user.phone if user else '' }}" placeholder="+1 (555) 000-0000">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Target Destination *</label>
+                            <input type="text" class="form-control" name="destination" required placeholder="e.g. Amalfi Coast, Iceland, Kyoto">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Estimated Budget</label>
+                            <select class="form-select" name="budget">
+                                <option value="$1,000 - $2,500">$1,000 - $2,500</option>
+                                <option value="$2,500 - $5,000" selected>$2,500 - $5,000</option>
+                                <option value="$5,000 - $10,000">$5,000 - $10,000</option>
+                                <option value="$10,000+">$10,000+ (Luxury)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Travelers</label>
+                            <input type="number" class="form-control" name="travelers" min="1" max="50" value="2">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Preferred Month</label>
+                            <input type="text" class="form-control" name="preferred_month" placeholder="e.g. October 2026">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Special Notes & Preferences</label>
+                            <textarea class="form-control" name="notes" rows="4" placeholder="Mention preferred activities, dietary needs, hotel tier preferences, etc."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn wf-btn-primary w-100 py-3 fs-6"><i class="fa-regular fa-paper-plane me-2"></i> Submit Custom Request</button>
+                </form>
+            </div>
+
+            {% if my_requests %}
+            <h4 class="mt-5 mb-3"><i class="fa-solid fa-list-check text-primary me-2"></i> My Tailor-Made Requests & Quotes</h4>
+            <div class="wf-panel p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Destination</th>
+                                <th>Month / Budget</th>
+                                <th>Status</th>
+                                <th>Admin Quote</th>
+                                <th>Admin Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in my_requests %}
+                            <tr>
+                                <td class="ps-4 fw-bold">{{ r.destination }}</td>
+                                <td class="small">{{ r.preferred_month or 'Anytime' }}<br><span class="text-muted">{{ r.budget }}</span></td>
+                                <td>
+                                    <span class="badge bg-{% if r.status == 'Confirmed' %}success{% elif r.status == 'Quoted / Offered' %}info{% elif r.status == 'Declined' %}danger{% else %}warning{% endif %}">
+                                        {{ r.status }}
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-success">
+                                    {% if r.admin_quote and r.admin_quote > 0 %}
+                                    <span class="currency-convert" data-usd-price="{{ r.admin_quote }}">{{ r.admin_quote|currency }}</span>
+                                    {% else %}
+                                    Pending Quote
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">{{ r.admin_notes or 'Reviewing details...' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

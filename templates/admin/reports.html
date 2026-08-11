@@ -1,0 +1,42 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'reports' %}
+{% block title %}Reports — Wayfarer & Co.{% endblock %}
+{% block page_title %}Reports{% endblock %}
+
+{% block admin_content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="wf-kpi-card">
+            <div class="wf-kpi-icon mb-2" style="background: rgba(232,90,79,0.12); color: var(--wf-coral);"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="wf-stat-num">${{ '%.2f'|format(total_revenue) }}</div>
+            <div class="wf-stat-label">Total Revenue (Confirmed + Completed)</div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="wf-panel p-4 h-100">
+            <h6 class="mb-3">Bookings by Status</h6>
+            {% for status, count in bookings_by_status %}
+            <div class="d-flex justify-content-between py-1 small">
+                <span>{{ status }}</span>
+                <span class="fw-semibold">{{ count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="wf-panel p-4 h-100">
+            <h6 class="mb-3">Top 5 Tours by Bookings</h6>
+            {% for name, count in top_tours %}
+            <div class="d-flex justify-content-between py-1 small">
+                <span>{{ name }}</span>
+                <span class="fw-semibold">{{ count }}</span>
+            </div>
+            {% else %}
+            <p class="text-muted small mb-0">No booking data yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

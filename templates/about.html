@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}About Us — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow">About Wayfarer &amp; Co.</div>
+        <h1>Journeys plotted with care</h1>
+        <p>We've been helping travelers turn maps into memories since day one.</p>
+    </div>
+</div>
+
+<section class="wf-section wf-section-white">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="wf-eyebrow">Our Story</div>
+                <h2>Built by travelers, for travelers</h2>
+                <p class="text-muted">Wayfarer &amp; Co. started with a simple idea: booking a trip should feel as exciting as taking one. What began as a small team of avid explorers has grown into a full-service tour operator connecting travelers with hand-picked experiences across the globe.</p>
+                <p class="text-muted">Every itinerary on our platform is vetted by people who've walked the trails, tasted the food, and stayed in the hotels we recommend.</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828" class="img-fluid rounded-4 shadow" alt="Team planning a trip">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-sand">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="wf-panel p-4 h-100">
+                    <div class="wf-feature-icon"><i class="fa-solid fa-bullseye"></i></div>
+                    <h4>Our Mission</h4>
+                    <p class="text-muted mb-0">To make world-class travel accessible, transparent, and stress-free for every kind of traveler — whether you're planning a weekend escape or a once-in-a-lifetime expedition.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="wf-panel p-4 h-100">
+                    <div class="wf-feature-icon"><i class="fa-solid fa-eye"></i></div>
+                    <h4>Our Vision</h4>
+                    <p class="text-muted mb-0">A world where distance never stands in the way of discovery — where every traveler can explore new cultures, landscapes, and connections with confidence.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-navy">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md-3 col-6">
+                <div class="wf-stat"><div class="wf-stat-num">{{ stats.tours }}+</div><div class="wf-stat-label" style="color: rgba(255,255,255,0.6);">Tours</div></div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="wf-stat"><div class="wf-stat-num">{{ stats.travelers }}+</div><div class="wf-stat-label" style="color: rgba(255,255,255,0.6);">Travelers</div></div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="wf-stat"><div class="wf-stat-num">{{ stats.destinations }}+</div><div class="wf-stat-label" style="color: rgba(255,255,255,0.6);">Destinations</div></div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="wf-stat"><div class="wf-stat-num">{{ stats.rating }}/5</div><div class="wf-stat-label" style="color: rgba(255,255,255,0.6);">Average Rating</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-white">
+    <div class="container">
+        <div class="wf-section-head">
+            <div class="wf-eyebrow">Why Choose Us</div>
+            <h2>What sets our journeys apart</h2>
+        </div>
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="wf-feature-icon mx-auto"><i class="fa-solid fa-people-group"></i></div>
+                <h5>Local Expertise</h5>
+                <p class="text-muted small">Itineraries designed with local guides who know each destination inside out.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="wf-feature-icon mx-auto"><i class="fa-solid fa-leaf"></i></div>
+                <h5>Responsible Travel</h5>
+                <p class="text-muted small">We partner with operators who prioritize sustainable, community-friendly tourism.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="wf-feature-icon mx-auto"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                <h5>Care at Every Step</h5>
+                <p class="text-muted small">From your first search to the final send-off, we're with you the whole way.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="wf-section wf-section-sand">
+    <div class="container">
+        <div class="wf-section-head">
+            <div class="wf-eyebrow">Our Team</div>
+            <h2>The people behind your journeys</h2>
+        </div>
+        <div class="row g-4 text-center">
+            {% for name, role, img in [
+                ('Maya Torres', 'Founder & Head of Itineraries', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2'),
+                ('Daniel Okafor', 'Head of Operations', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d'),
+                ('Elena Petrova', 'Customer Experience Lead', 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e')
+            ] %}
+            <div class="col-md-4">
+                <img src="{{ img }}" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;" alt="{{ name }}">
+                <h6 class="mb-0">{{ name }}</h6>
+                <small class="text-muted">{{ role }}</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

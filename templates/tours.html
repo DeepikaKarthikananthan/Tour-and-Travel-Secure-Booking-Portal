@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Tours — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow">Tour Catalog</div>
+        <h1>Find your next journey</h1>
+        <p>{{ pagination.total }} tour package{{ 's' if pagination.total != 1 else '' }} available</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <form method="get" class="wf-panel p-4">
+                <h6 class="wf-footer-heading text-uppercase" style="color: var(--wf-navy);">Filters</h6>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Search</label>
+                    <input type="text" class="form-control" name="q" value="{{ filters.get('q', '') }}" placeholder="Tour or destination">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Destination</label>
+                    <select class="form-select" name="destination">
+                        <option value="">All Destinations</option>
+                        {% for d in destinations %}
+                        <option value="{{ d }}" {% if filters.get('destination') == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Category</label>
+                    <select class="form-select" name="category">
+                        <option value="">All Categories</option>
+                        {% for c in categories %}
+                        <option value="{{ c }}" {% if filters.get('category') == c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Duration</label>
+                    <select class="form-select" name="duration">
+                        <option value="">Any Duration</option>
+                        {% for d in durations %}
+                        <option value="{{ d }}" {% if filters.get('duration') == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Max Price</label>
+                    <input type="number" class="form-control" name="max_price" min="0" step="50" value="{{ filters.get('max_price', '') }}" placeholder="e.g. 1500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-semibold">Sort By</label>
+                    <select class="form-select" name="sort">
+                        <option value="">Newest</option>
+                        <option value="price_asc" {% if filters.get('sort') == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_desc" {% if filters.get('sort') == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="rating" {% if filters.get('sort') == 'rating' %}selected{% endif %}>Top Rated</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn wf-btn-primary w-100">Apply Filters</button>
+                <a href="{{ url_for('tours.list_tours') }}" class="btn btn-link w-100 mt-2 text-muted">Clear Filters</a>
+            </form>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="row g-4">
+                {% for tour in tours %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="wf-tour-card">
+                        <div class="wf-tour-img-wrap">
+                            <img src="{{ tour.image_url or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}" alt="{{ tour.name }}" loading="lazy">
+                            <span class="wf-tour-badge">{{ tour.category }}</span>
+                            <span class="wf-tour-rating"><i class="fa-solid fa-star text-warning"></i> {{ tour.average_rating() }}</span>
+                        </div>
+                        <div class="wf-tour-body">
+                            <div class="wf-tour-dest"><i class="fa-solid fa-location-dot me-1"></i>{{ tour.destination }}</div>
+                            <h3 class="wf-tour-title">{{ tour.name }}</h3>
+                            <p class="wf-tour-meta mb-2"><i class="fa-regular fa-clock me-1"></i>{{ tour.duration }}</p>
+                            <p class="text-muted small mb-3">{{ tour.description[:90] }}{% if tour.description|length > 90 %}…{% endif %}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="wf-tour-price" data-usd-price="{{ tour.price }}">{{ tour.price|currency }}<small> / person</small></div>
+                                <a href="{{ url_for('tours.tour_details', tour_id=tour.id) }}" class="btn wf-btn-outline btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12">
+                    <div class="wf-empty-state">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <p>No tours match your filters. Try broadening your search.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if pagination.pages > 1 %}
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('tours.list_tours', page=pagination.prev_num, **filters) }}">Previous</a>
+                    </li>
+                    {% for p in pagination.iter_pages() %}
+                        {% if p %}
+                        <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('tours.list_tours', page=p, **filters) }}">{{ p }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('tours.list_tours', page=pagination.next_num, **filters) }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

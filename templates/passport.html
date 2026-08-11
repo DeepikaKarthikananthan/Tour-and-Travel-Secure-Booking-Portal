@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Travel Passport & Badges — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow"><i class="fa-solid fa-passport me-1"></i> Digital Passport</div>
+        <h1>{{ user.name }}'s Travel Statistics</h1>
+        <p>Track your journeys, unlocked achievement badges, and reward points balance.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="wf-panel p-4 text-center">
+                <div class="wf-feature-icon mx-auto mb-3" style="background: rgba(230,126,34,0.12); color: var(--wf-coral); width:80px; height:80px; font-size:2rem;">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <h3>{{ user.reward_points }}</h3>
+                <div class="text-muted fw-semibold">Wayfarer Reward Points</div>
+                <small class="text-muted d-block mt-2">Earn 1 point per $10 spent on journeys!</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="wf-panel p-4 text-center">
+                <div class="wf-feature-icon mx-auto mb-3" style="background: rgba(63,125,92,0.12); color: var(--wf-palm); width:80px; height:80px; font-size:2rem;">
+                    <i class="fa-solid fa-earth-americas"></i>
+                </div>
+                <h3>{{ destinations_visited|length }}</h3>
+                <div class="text-muted fw-semibold">Destinations Visited</div>
+                <small class="text-muted d-block mt-2">{{ destinations_visited|join(', ') if destinations_visited else 'None yet' }}</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="wf-panel p-4 text-center">
+                <div class="wf-feature-icon mx-auto mb-3" style="background: rgba(52,152,219,0.12); color: #2980b9; width:80px; height:80px; font-size:2rem;">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <h3>{{ total_spent|currency }}</h3>
+                <div class="text-muted fw-semibold">Total Spent on Trips</div>
+                <small class="text-muted d-block mt-2">{{ completed_bookings|length }} Completed Journeys</small>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mt-5 mb-4"><i class="fa-solid fa-award text-warning me-2"></i> Unlocked Achievements</h4>
+    <div class="row g-4">
+        {% for b in badges %}
+        <div class="col-md-3">
+            <div class="wf-panel p-4 text-center h-100">
+                <i class="fa-solid {{ b.icon }} fa-3x text-warning mb-3"></i>
+                <h5 class="fw-bold">{{ b.title }}</h5>
+                <p class="text-muted small mb-0">{{ b.desc }}</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-muted">Complete your first trip to unlock achievement badges!</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

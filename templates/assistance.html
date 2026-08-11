@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Emergency Assistance — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow text-warning"><i class="fa-solid fa-shield-halved me-1"></i> 24/7 Global Support</div>
+        <h1>Emergency Travel Assistance</h1>
+        <p>Immediate helpline numbers, embassy contact support, and medical assistance for travelers worldwide.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="wf-panel p-4 text-center border-danger">
+                <i class="fa-solid fa-headset fa-3x text-danger mb-3"></i>
+                <h5>24/7 Emergency Hotline</h5>
+                <p class="text-muted small">Available worldwide for active travelers requiring immediate assistance.</p>
+                <div class="fs-5 fw-bold text-dark">+1 (800) 555-WAYFARER</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="wf-panel p-4 text-center">
+                <i class="fa-solid fa-hospital fa-3x text-primary mb-3"></i>
+                <h5>Medical & Insurance Claims</h5>
+                <p class="text-muted small">Need medical care or travel insurance claim authorization while abroad?</p>
+                <div class="fs-6 fw-semibold text-primary">insurance@wayfarer.com</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="wf-panel p-4 text-center">
+                <i class="fa-solid fa-passport fa-3x text-success mb-3"></i>
+                <h5>Embassy & Visa Concierge</h5>
+                <p class="text-muted small">Lost passport or visa emergency support while traveling.</p>
+                <div class="fs-6 fw-semibold text-success">embassy-help@wayfarer.com</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="wf-panel p-5 mb-5">
+                <h4 class="mb-3"><i class="fa-solid fa-life-ring text-danger me-2"></i> Submit an Emergency Support Ticket</h4>
+                <form method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Your Name *</label>
+                            <input type="text" class="form-control" name="name" value="{{ user.name if user else '' }}" required placeholder="e.g. John Doe">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email Address *</label>
+                            <input type="email" class="form-control" name="email" value="{{ user.email if user else '' }}" required placeholder="e.g. john@example.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" value="{{ user.phone if user else '' }}" placeholder="+1 555-0199">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Category</label>
+                            <select class="form-select" name="category">
+                                <option value="Medical Emergency">Medical Emergency</option>
+                                <option value="Lost Passport / Visa">Lost Passport / Visa</option>
+                                <option value="Flight Interruption">Flight Interruption</option>
+                                <option value="General Assistance" selected>General Assistance</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Subject *</label>
+                            <input type="text" class="form-control" name="subject" required placeholder="Brief summary of assistance needed">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Detailed Message *</label>
+                            <textarea class="form-control" name="message" rows="4" required placeholder="Describe your emergency or question in detail"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-danger w-100 py-3"><i class="fa-solid fa-paper-plane me-2"></i> Submit Support Ticket</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {% if my_tickets %}
+            <h4><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i> My Support Tickets & Responses</h4>
+            <div class="wf-panel p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Ticket ID</th>
+                                <th>Category / Subject</th>
+                                <th>Status</th>
+                                <th>Support Response</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in my_tickets %}
+                            <tr>
+                                <td class="ps-4 fw-bold">#{{ t.id }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border mb-1">{{ t.category }}</span>
+                                    <div class="fw-semibold">{{ t.subject }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if t.status == 'Resolved' %}success{% elif t.status == 'In Progress' %}warning{% else %}danger{% endif %}">
+                                        {{ t.status }}
+                                    </span>
+                                </td>
+                                <td class="small text-muted" style="max-width: 250px;">
+                                    {{ t.admin_response or 'Awaiting support agent review...' }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

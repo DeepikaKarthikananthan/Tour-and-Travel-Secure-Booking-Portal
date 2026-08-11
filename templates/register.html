@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Sign Up — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-auth-wrap">
+    <div class="container">
+        <div class="wf-auth-card">
+            <div class="text-center mb-4">
+                <div class="wf-eyebrow">Join Wayfarer &amp; Co.</div>
+                <h2 class="mt-1">Create your account</h2>
+            </div>
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Full Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ form.get('name','') }}" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Email Address</label>
+                    <input type="email" name="email" class="form-control" value="{{ form.get('email','') }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Phone Number</label>
+                    <input type="text" name="phone" class="form-control" value="{{ form.get('phone','') }}" placeholder="+1 555 123 4567">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Password</label>
+                    <input type="password" name="password" class="form-control" required minlength="6">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-semibold">Confirm Password</label>
+                    <input type="password" name="confirm_password" class="form-control" required minlength="6">
+                </div>
+                <button type="submit" class="btn wf-btn-primary w-100">Create Account</button>
+            </form>
+            <p class="text-center small text-muted mt-4 mb-0">
+                Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

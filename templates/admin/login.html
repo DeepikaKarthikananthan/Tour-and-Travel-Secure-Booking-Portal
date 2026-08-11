@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — Wayfarer & Co.</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body style="background: var(--wf-navy-deep); min-height:100vh; display:flex; align-items:center;">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="wf-auth-card text-center">
+                <div class="wf-brand-mark mx-auto mb-3" style="width:52px;height:52px;font-size:1.3rem;">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div class="wf-eyebrow">Admin Portal</div>
+                <h2 class="mt-1 mb-4">Wayfarer &amp; Co.</h2>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} wf-alert text-start" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="post" class="text-start">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Admin Email</label>
+                        <input type="email" name="email" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn wf-btn-primary w-100">Log In to Admin Panel</button>
+                </form>
+                <p class="text-center small text-muted mt-4 mb-0">
+                    <a href="{{ url_for('main.home') }}"><i class="fa-solid fa-arrow-left me-1"></i>Back to main site</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

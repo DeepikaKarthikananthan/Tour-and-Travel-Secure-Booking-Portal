@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Trip Expense Calculator — Wayfarer & Co.{% endblock %}
+
+{% block content %}
+<div class="wf-page-header">
+    <div class="container">
+        <div class="wf-eyebrow"><i class="fa-solid fa-calculator me-1"></i> Budget Planning Tool</div>
+        <h1>Interactive Trip Expense Calculator & Splitter</h1>
+        <p>Estimate total travel expenses, flight add-ons, daily spending, and calculate cost per person.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="wf-panel p-4 shadow-sm">
+                <h4 class="mb-4">Enter Trip Parameters</h4>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Select Target Tour Package</label>
+                    <select class="form-select" id="calcTourSelect">
+                        {% for t in tours %}
+                        <option value="{{ t.price }}" data-child-price="{{ t.child_price }}">{{ t.name }} ({{ t.price|currency }} / person)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <label class="form-label fw-semibold">Adult Travelers</label>
+                        <input type="number" class="form-control" id="calcAdults" value="2" min="1">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-semibold">Child Travelers</label>
+                        <input type="number" class="form-control" id="calcChildren" value="0" min="0">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Estimated Flights per Person ($)</label>
+                    <input type="number" class="form-control" id="calcFlight" value="450" min="0">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Daily Food & Shopping Budget per Person ($)</label>
+                    <input type="number" class="form-control" id="calcDaily" value="85" min="0">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Trip Duration (Days)</label>
+                    <input type="number" class="form-control" id="calcDays" value="5" min="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="wf-panel p-5 bg-light border-primary shadow-sm h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h4 class="mb-4 text-primary"><i class="fa-solid fa-receipt me-2"></i> Estimated Total Budget</h4>
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span>Tour Package Base Total:</span>
+                        <strong id="resTour" class="currency-convert" data-usd-price="0">$0.00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span>Estimated Airfare Total:</span>
+                        <strong id="resFlight" class="currency-convert" data-usd-price="0">$0.00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span>Daily Food & Incidentals Total:</span>
+                        <strong id="resDaily" class="currency-convert" data-usd-price="0">$0.00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between fs-4 fw-bold text-success border-top pt-3">
+                        <span>Grand Total Budget:</span>
+                        <span id="resGrandTotal" class="currency-convert" data-usd-price="0">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-white rounded border mt-4 text-center">
+                    <div class="text-muted fw-semibold">Cost Per Adult Traveler</div>
+                    <div class="fs-2 fw-bold text-dark currency-convert" id="resPerPerson" data-usd-price="0">$0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const tourSel = document.getElementById("calcTourSelect");
+    const adultsIn = document.getElementById("calcAdults");
+    const childIn = document.getElementById("calcChildren");
+    const flightIn = document.getElementById("calcFlight");
+    const dailyIn = document.getElementById("calcDaily");
+    const daysIn = document.getElementById("calcDays");
+
+    function calculate() {
+        const adultPrice = parseFloat(tourSel.value || 0);
+        const childPrice = parseFloat(tourSel.options[tourSel.selectedIndex].dataset.childPrice || 0);
+        const adults = parseInt(adultsIn.value || 1);
+        const children = parseInt(childIn.value || 0);
+        const flight = parseFloat(flightIn.value || 0);
+        const daily = parseFloat(dailyIn.value || 0);
+        const days = parseInt(daysIn.value || 1);
+
+        const tourTotal = (adults * adultPrice) + (children * childPrice);
+        const flightTotal = (adults + children) * flight;
+        const dailyTotal = (adults + children) * daily * days;
+        const grandTotal = tourTotal + flightTotal + dailyTotal;
+        const perPerson = adults > 0 ? grandTotal / adults : grandTotal;
+
+        const resTour = document.getElementById("resTour");
+        const resFlight = document.getElementById("resFlight");
+        const resDaily = document.getElementById("resDaily");
+        const resGrandTotal = document.getElementById("resGrandTotal");
+        const resPerPerson = document.getElementById("resPerPerson");
+
+        resTour.dataset.usdPrice = tourTotal.toFixed(2);
+        resFlight.dataset.usdPrice = flightTotal.toFixed(2);
+        resDaily.dataset.usdPrice = dailyTotal.toFixed(2);
+        resGrandTotal.dataset.usdPrice = grandTotal.toFixed(2);
+        resPerPerson.dataset.usdPrice = perPerson.toFixed(2);
+
+        resTour.textContent = "$" + tourTotal.toFixed(2);
+        resFlight.textContent = "$" + flightTotal.toFixed(2);
+        resDaily.textContent = "$" + dailyTotal.toFixed(2);
+        resGrandTotal.textContent = "$" + grandTotal.toFixed(2);
+        resPerPerson.textContent = "$" + perPerson.toFixed(2);
+
+        const selectedCurr = localStorage.getItem("selectedCurrency") || "USD";
+        if (typeof window.applyCurrency === "function") {
+            window.applyCurrency(selectedCurr);
+        }
+    }
+
+    [tourSel, adultsIn, childIn, flightIn, dailyIn, daysIn].forEach(el => el.addEventListener("input", calculate));
+    calculate();
+});
+</script>
+{% endblock %}

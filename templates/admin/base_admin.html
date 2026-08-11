@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin — Wayfarer & Co.{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="wf-admin-body">
+
+<div class="d-flex">
+    <div class="wf-admin-sidebar" style="width: 250px; flex-shrink:0;">
+        <a class="wf-brand mb-4 d-inline-flex" href="{{ url_for('admin.dashboard') }}">
+            <span class="wf-brand-mark"><i class="fa-solid fa-route"></i></span>
+            Wayfarer<span class="wf-brand-dot">&amp;</span>Co.
+        </a>
+        <div class="text-uppercase small mb-2 mt-4" style="color: rgba(255,255,255,0.4); letter-spacing:0.08em; font-size:0.7rem;">Admin Panel</div>
+        <nav class="nav flex-column">
+            <a class="nav-link {% if active == 'dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
+            <a class="nav-link {% if active == 'tours' %}active{% endif %}" href="{{ url_for('admin.manage_tours') }}"><i class="fa-solid fa-map me-2"></i>Manage Tours</a>
+            <a class="nav-link {% if active == 'add_tour' %}active{% endif %}" href="{{ url_for('admin.add_tour') }}"><i class="fa-solid fa-circle-plus me-2"></i>Add Tour</a>
+            <a class="nav-link {% if active == 'users' %}active{% endif %}" href="{{ url_for('admin.manage_users') }}"><i class="fa-solid fa-users me-2"></i>Manage Users</a>
+            <a class="nav-link {% if active == 'bookings' %}active{% endif %}" href="{{ url_for('admin.manage_bookings') }}"><i class="fa-solid fa-ticket me-2"></i>Bookings & Refunds</a>
+            <a class="nav-link {% if active == 'custom_trips' %}active{% endif %}" href="{{ url_for('admin.manage_custom_trips') }}"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Custom Trips</a>
+            <a class="nav-link {% if active == 'assistance' %}active{% endif %}" href="{{ url_for('admin.manage_assistance') }}"><i class="fa-solid fa-life-ring me-2"></i>Assistance Tickets</a>
+            <a class="nav-link {% if active == 'feedback' %}active{% endif %}" href="{{ url_for('admin.manage_feedback') }}"><i class="fa-solid fa-comment me-2"></i>Manage Feedback</a>
+            <a class="nav-link {% if active == 'subscribers' %}active{% endif %}" href="{{ url_for('admin.manage_subscribers') }}"><i class="fa-solid fa-envelope-open-text me-2"></i>Subscribers</a>
+            <a class="nav-link {% if active == 'promotions' %}active{% endif %}" href="{{ url_for('admin.manage_promotions') }}"><i class="fa-solid fa-bullhorn me-2"></i>Promotions</a>
+            <a class="nav-link {% if active == 'analytics' %}active{% endif %}" href="{{ url_for('admin.analytics') }}"><i class="fa-solid fa-chart-pie me-2"></i>Analytics & Charts</a>
+            <a class="nav-link {% if active == 'reports' %}active{% endif %}" href="{{ url_for('admin.reports') }}"><i class="fa-solid fa-chart-line me-2"></i>Reports</a>
+            <a class="nav-link {% if active == 'settings' %}active{% endif %}" href="{{ url_for('admin.settings') }}"><i class="fa-solid fa-gear me-2"></i>Settings</a>
+            <hr class="my-2" style="border-color: rgba(255,255,255,0.1);">
+            <a class="nav-link text-warning" href="{{ url_for('main.home') }}"><i class="fa-solid fa-globe me-2"></i>View Site</a>
+            <a class="nav-link" style="color:#e88a84;" href="{{ url_for('admin.logout') }}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a>
+        </nav>
+    </div>
+
+    <div class="flex-grow-1" style="min-width:0;">
+        <div class="wf-admin-topbar d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{% block page_title %}Dashboard{% endblock %}</h5>
+            <div class="d-flex align-items-center gap-2">
+                <span class="wf-avatar">A</span>
+                <span class="small fw-semibold">Administrator</span>
+            </div>
+        </div>
+
+        <div class="wf-admin-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show wf-alert" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

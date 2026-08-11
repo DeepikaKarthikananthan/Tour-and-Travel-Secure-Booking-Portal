@@ -1,0 +1,119 @@
+{% extends "admin/base_admin.html" %}
+{% set active = 'bookings' %}
+{% block title %}Manage Bookings — Wayfarer & Co.{% endblock %}
+{% block page_title %}Manage Bookings{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <form method="get" class="d-flex gap-2">
+        <input type="text" name="q" class="form-control" placeholder="Search by customer..." value="{{ search }}" style="width:220px;">
+        <select name="status" class="form-select" style="width:160px;" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            {% for s in ['Booked', 'Confirmed', 'Pending', 'Completed', 'Cancelled'] %}
+            <option value="{{ s }}" {% if status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn wf-btn-outline btn-sm">Filter</button>
+    </form>
+    <a href="{{ url_for('api.export_bookings_csv') }}" class="btn wf-btn-primary btn-sm"><i class="fa-solid fa-file-csv me-1"></i> Export CSV Report</a>
+</div>
+
+<div class="wf-panel p-0">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4">Reference</th>
+                    <th>Customer</th>
+                    <th>Tour</th>
+                    <th>Travel Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Refund</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td class="ps-4 wf-tour-dest">{{ b.reference }}</td>
+                    <td>{{ b.user.name }}<br><small class="text-muted">{{ b.user.email }}</small></td>
+                    <td>{{ b.tour.name }}</td>
+                    <td>{{ b.travel_date.strftime('%b %d, %Y') }}</td>
+                    <td>{{ b.total_amount|currency }}</td>
+                    <td><span class="badge bg-{{ b.status_badge_class() }} wf-badge-status">{{ b.status }}</span></td>
+                    <td>
+                        {% if b.refund_status and b.refund_status != 'None' %}
+                        <span class="badge bg-{% if b.refund_status == 'Refunded' %}success{% elif b.refund_status == 'Pending Refund' %}warning{% else %}secondary{% endif %}">
+                            {{ b.refund_status }} (${{ "%.2f"|format(b.refund_amount) }})
+                        </span>
+                        {% else %}
+                        <span class="text-muted small">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <form method="post" action="{{ url_for('admin.update_booking_status', booking_id=b.id) }}" class="d-flex gap-1">
+                                <select name="status" class="form-select form-select-sm" style="width:120px;">
+                                    {% for s in ['Booked', 'Confirmed', 'Pending', 'Completed', 'Cancelled'] %}
+                                    <option value="{{ s }}" {% if b.status == s %}selected{% endif %}>{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-sm wf-btn-primary">Update</button>
+                            </form>
+                            <button type="button" class="btn btn-sm wf-btn-outline" data-bs-toggle="modal" data-bs-target="#refundModal{{ b.id }}"><i class="fa-solid fa-hand-holding-dollar"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Refund Management Modal -->
+                <div class="modal fade" id="refundModal{{ b.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="post" action="{{ url_for('admin.update_booking_refund', booking_id=b.id) }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Refund Manager — Booking {{ b.reference }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-start">
+                                    <div class="mb-2"><strong>Customer:</strong> {{ b.user.name }} ({{ b.user.email }})</div>
+                                    <div class="mb-3"><strong>Total Amount Paid:</strong> {{ b.total_amount|currency }}</div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Refund Status</label>
+                                        <select name="refund_status" class="form-select">
+                                            <option value="Refunded" {% if b.refund_status in ['Refund Requested', 'Pending Refund', 'Refunded'] %}selected{% endif %}>🟢 Refunded (Approve & Process Refund)</option>
+                                            <option value="Refund Requested" {% if b.refund_status == 'Refund Requested' and False %}selected{% endif %}>🟡 Refund Requested by User</option>
+                                            <option value="Pending Refund">⏳ Pending Refund</option>
+                                            <option value="Ineligible" {% if b.refund_status == 'Ineligible' %}selected{% endif %}>❌ Ineligible for Refund</option>
+                                            <option value="None" {% if b.refund_status == 'None' %}selected{% endif %}>— None (No Refund)</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Refund Amount ($)</label>
+                                        <input type="number" step="0.01" name="refund_amount" class="form-control" value="{{ b.refund_amount if b.refund_amount > 0 else b.total_amount }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Customer Refund Request Reason</label>
+                                        <textarea name="refund_reason" class="form-control" rows="2" placeholder="Customer reason">{{ b.refund_reason or '' }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold text-success">Admin Refund Confirmation Note (Sent to User)</label>
+                                        <textarea name="admin_refund_note" class="form-control" rows="2" placeholder="e.g. Full refund approved and credited to your original payment method.">{{ b.admin_refund_note or '' }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Approve & Issue Refund</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <tr><td colspan="8" class="text-center text-muted py-5">No bookings found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
