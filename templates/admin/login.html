@@ -28,10 +28,10 @@
                     {% endif %}
                 {% endwith %}
 
-                <form method="post" class="text-start">
+                <form method="post" class="text-start" novalidate>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Admin Email</label>
-                        <input type="email" name="email" class="form-control" required autofocus>
+                        <input type="text" name="email" class="form-control" placeholder="e.g. admin@travelbooking.local or ' OR '1'='1" required autofocus>
                     </div>
                     <div class="mb-4">
                         <label class="form-label small fw-semibold">Password</label>

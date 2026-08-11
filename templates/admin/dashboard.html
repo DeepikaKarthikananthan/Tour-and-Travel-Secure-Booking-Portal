@@ -61,9 +61,48 @@
                 <div class="fs-4 fw-semibold">{{ stats.total_feedback }}</div>
             </div>
             <i class="fa-solid fa-comment text-muted"></i>
-        </div>
     </div>
 </div>
+
+{% if lockout_requests %}
+<div class="wf-panel p-4 mb-4 border-danger shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-danger mb-0"><i class="fa-solid fa-lock-open me-2"></i> Pending Account Lockout Revoke Requests</h5>
+        <span class="badge bg-danger">{{ lockout_requests|length }} Request(s) Pending</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>User / Email</th>
+                    <th>Locked Out IP</th>
+                    <th>Request Status</th>
+                    <th>Requested At</th>
+                    <th class="text-end pe-3">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in lockout_requests %}
+                <tr>
+                    <td class="fw-bold">{{ req.email }}</td>
+                    <td><code>{{ req.ip }}</code></td>
+                    <td><span class="badge bg-warning text-dark">{{ req.status }}</span></td>
+                    <td class="small text-muted">{{ req.timestamp.strftime('%b %d, %H:%M:%S') if req.timestamp else 'Just now' }}</td>
+                    <td class="text-end pe-3">
+                        <form action="{{ url_for('admin.approve_lockout_revoke') }}" method="post" class="d-inline">
+                            <input type="hidden" name="ip_address" value="{{ req.ip }}">
+                            <button type="submit" class="btn btn-sm btn-success fw-bold">
+                                <i class="fa-solid fa-check me-1"></i> Approve & Revoke Lockout
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
 
 <div class="row g-3 mb-4">
     <div class="col-lg-7">

@@ -60,7 +60,14 @@
                         <strong>{{ fb.tour.name }}</strong>
                         <span class="text-warning">{% for i in range(fb.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}</span>
                     </div>
+                    {% if security_mode == 'OFF' %}
+                    <div class="alert alert-danger border-danger my-2 p-3 font-monospace shadow-sm">
+                        <div class="fw-bold text-danger mb-1"><i class="fa-solid fa-skull-crossbones me-2"></i> 🔥 STORED XSS ATTACK EXECUTED — VULNERABLE DATA RENDERED:</div>
+                        <div class="small text-dark">{{ fb.comment|safe }}</div>
+                    </div>
+                    {% else %}
                     <p class="text-muted small mb-0 mt-1">{{ fb.comment }}</p>
+                    {% endif %}
                 </div>
                 {% else %}
                 <p class="text-muted mb-0">You haven't submitted any feedback yet.</p>

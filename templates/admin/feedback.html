@@ -23,7 +23,13 @@
                     <td class="ps-4">{{ fb.user.name }}</td>
                     <td>{{ fb.tour.name }}</td>
                     <td class="text-warning">{% for i in range(fb.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}</td>
-                    <td style="max-width:320px;">{{ fb.comment[:120] }}{% if fb.comment|length > 120 %}…{% endif %}</td>
+                    <td style="max-width:320px;">
+                        {% if security_mode == 'OFF' %}
+                        <div class="text-danger fw-bold small"><i class="fa-solid fa-skull-crossbones me-1"></i> STORED XSS: {{ fb.comment|safe }}</div>
+                        {% else %}
+                        {{ fb.comment[:120] }}{% if fb.comment|length > 120 %}…{% endif %}
+                        {% endif %}
+                    </td>
                     <td>{{ fb.created_at.strftime('%b %d, %Y') }}</td>
                     <td class="text-end pe-4">
                         <form method="post" action="{{ url_for('admin.delete_feedback', feedback_id=fb.id) }}" onsubmit="return confirm('Delete this feedback?');">

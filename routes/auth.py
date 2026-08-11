@@ -67,7 +67,8 @@ def register():
 # ==============================================================================
 LOGIN_ATTEMPTS = {}
 MAX_FAILED_ATTEMPTS = 5
-LOCKOUT_WINDOW_SECONDS = 60
+LOCKOUT_WINDOW_SECONDS = 300  # 5 Minutes Lockout
+REVOKE_REQUESTS = {}  # Tracks IP lockout revoke requests for Admin approval
 
 
 def check_rate_limit(ip_address):
@@ -89,6 +90,20 @@ def record_failed_attempt(ip_address):
     LOGIN_ATTEMPTS[ip_address].append(now)
 
 
+@auth_bp.route("/request-lockout-revoke", methods=["POST"])
+def request_lockout_revoke():
+    client_ip = request.remote_addr or "127.0.0.1"
+    email = request.form.get("email", "").strip()
+    REVOKE_REQUESTS[client_ip] = {
+        "ip": client_ip,
+        "email": email or "Unknown User",
+        "status": "Pending Admin Approval",
+        "timestamp": datetime.utcnow()
+    }
+    flash("🔓 Your 5-minute lockout revoke request has been submitted to the Administrator for approval.", "info")
+    return redirect(url_for("auth.login"))
+
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if session.get("user_id"):
@@ -100,13 +115,21 @@ def login():
     if request.method == "POST":
         client_ip = request.remote_addr or "127.0.0.1"
         security_mode = session.get("security_mode", "ON")
+        email = request.form.get("email", "").strip().lower()
 
         # Rate Limiting check (Bypassed when Security Mode is OFF)
         if security_mode == "ON" and not check_rate_limit(client_ip):
-            flash("Too many failed login attempts. Please wait 60 seconds before trying again.", "danger")
-            return render_template("login.html"), 429
+            has_requested = client_ip in REVOKE_REQUESTS
+            revoke_status = REVOKE_REQUESTS.get(client_ip, {}).get("status")
+            return render_template(
+                "login.html",
+                is_locked_out=True,
+                client_ip=client_ip,
+                email=email,
+                has_requested=has_requested,
+                revoke_status=revoke_status
+            ), 429
 
-        email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
         remember = request.form.get("remember")
 
@@ -137,9 +160,11 @@ def login():
                 flash("Your account has been deactivated. Please contact support.", "danger")
                 return render_template("login.html")
 
-            # Clear failed attempts on success
+            # Clear failed attempts on success, preserving security_mode state
             LOGIN_ATTEMPTS.pop(client_ip, None)
+            sec_mode = session.get("security_mode", "ON")
             session.clear()
+            session["security_mode"] = sec_mode
             session["user_id"] = user.id
             if user.is_admin():
                 session["admin_id"] = user.id

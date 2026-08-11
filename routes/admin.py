@@ -79,6 +79,9 @@ def dashboard():
         "Cancelled": Booking.query.filter_by(status="Cancelled").count(),
     }
 
+    from routes.auth import REVOKE_REQUESTS, LOGIN_ATTEMPTS
+    lockout_requests = list(REVOKE_REQUESTS.values())
+
     return render_template(
         "admin/dashboard.html",
         stats=stats,
@@ -86,7 +89,21 @@ def dashboard():
         chart_labels=chart_labels,
         chart_values=chart_values,
         status_counts=status_counts,
+        lockout_requests=lockout_requests
     )
+
+
+@admin_bp.route("/lockout/approve", methods=["POST"])
+@admin_required
+def approve_lockout_revoke():
+    from routes.auth import REVOKE_REQUESTS, LOGIN_ATTEMPTS
+    ip_to_revoke = request.form.get("ip_address", "").strip()
+    if ip_to_revoke in LOGIN_ATTEMPTS:
+        LOGIN_ATTEMPTS.pop(ip_to_revoke, None)
+    if ip_to_revoke in REVOKE_REQUESTS:
+        REVOKE_REQUESTS.pop(ip_to_revoke, None)
+    flash(f"🔓 Account lockout for IP {ip_to_revoke} has been REVOKED by Administrator. User can log in again immediately.", "success")
+    return redirect(url_for("admin.dashboard"))
 
 
 # ------------------------------------------------------------- TOURS ----

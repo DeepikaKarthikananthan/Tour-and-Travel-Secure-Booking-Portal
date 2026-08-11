@@ -72,6 +72,25 @@
         </div>
 
         <div class="col-lg-9">
+            {% if search %}
+            <div class="wf-panel p-3 mb-4 bg-light border-warning shadow-sm">
+                <strong>Search Results for:</strong> 
+                {% if security_mode == 'OFF' %}
+                    <span class="text-danger fw-bold">{{ search|safe }}</span>
+                    <script>
+                        (function(){
+                            var rawSearch = {{ search|tojson }};
+                            if (rawSearch && (rawSearch.includes('<') || rawSearch.includes('alert') || rawSearch.includes('onerror'))) {
+                                alert('🔥 REFLECTED XSS ATTACK EXECUTED!\n\nPayload: ' + rawSearch);
+                            }
+                        })();
+                    </script>
+                {% else %}
+                    <span>{{ search }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
             <div class="row g-4">
                 {% for tour in tours %}
                 <div class="col-md-6 col-xl-4">

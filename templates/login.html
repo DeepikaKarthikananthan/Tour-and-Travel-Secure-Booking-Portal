@@ -8,11 +8,31 @@
             <div class="text-center mb-4">
                 <div class="wf-eyebrow">Welcome Back</div>
                 <h2 class="mt-1">Log in to your account</h2>
+            {% if is_locked_out %}
+            <div class="alert alert-danger border-danger mb-4 p-3 rounded">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fa-solid fa-lock text-danger fs-4 me-2"></i>
+                    <strong class="fs-6 text-danger">ACCOUNT LOCKED OUT (5-MINUTE SECURITY TIMEOUT)</strong>
+                </div>
+                <div class="small text-muted mb-3">Too many failed login attempts from IP <code>{{ client_ip }}</code>. Your IP has been temporarily locked out for 5 minutes to prevent brute-force attacks.</div>
+                
+                {% if has_requested %}
+                <div class="badge bg-warning text-dark p-2 w-100 text-wrap"><i class="fa-solid fa-clock me-1"></i> Revoke Request Submitted: {{ revoke_status }}</div>
+                {% else %}
+                <form action="{{ url_for('auth.request_lockout_revoke') }}" method="post">
+                    <input type="hidden" name="email" value="{{ email }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold">
+                        <i class="fa-solid fa-key me-1"></i> 🔓 Request Account Lockout Revoke from Admin
+                    </button>
+                </form>
+                {% endif %}
             </div>
-            <form method="post">
+            {% endif %}
+
+            <form method="post" novalidate>
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Email Address</label>
-                    <input type="email" name="email" class="form-control" required autofocus>
+                    <input type="text" name="email" class="form-control" placeholder="e.g. user@example.com or ' OR '1'='1" required autofocus>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Password</label>

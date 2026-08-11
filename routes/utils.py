@@ -84,7 +84,9 @@ def login_required(view_func):
         user = get_current_user()
         if user is None or not user.is_active:
             log_security_event("ACCOUNT_INACTIVE", f"User account inactive or missing for ID {session.get('user_id')}.")
+            sec_mode = session.get("security_mode", "ON")
             session.clear()
+            session["security_mode"] = sec_mode
             flash("Your account is not available. Please log in again.", "danger")
             return redirect(url_for("auth.login"))
         return view_func(*args, **kwargs)
