@@ -7,6 +7,11 @@
         <div class="wf-auth-card">
             <div class="text-center mb-4">
                 <div class="wf-eyebrow">Welcome Back</div>
+                <div class="mb-3 text-center">
+                    <a href="{{ url_for('auth.trigger_demo_lockout') }}" class="badge bg-secondary text-white text-decoration-none p-2">
+                        <i class="fa-solid fa-bolt me-1"></i> 1-Click Trigger 5-Min Lockout (Exam Demo)
+                    </a>
+                </div>
                 <h2 class="mt-1">Log in to your account</h2>
             {% if is_locked_out %}
             <div class="alert alert-danger border-danger mb-4 p-3 rounded">

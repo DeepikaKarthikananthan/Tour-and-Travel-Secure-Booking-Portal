@@ -71,3 +71,13 @@ class PromotionCampaign(db.Model):
     promo_code = db.Column(db.String(50), nullable=True)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class LockoutRevokeRequest(db.Model):
+    __tablename__ = "lockout_revoke_requests"
+
+    id = db.Column(db.Integer, primary_key=True)
+    ip_address = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(150), nullable=False)
+    status = db.Column(db.String(30), default="Pending Admin Approval", nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)

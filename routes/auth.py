@@ -92,15 +92,34 @@ def record_failed_attempt(ip_address):
 
 @auth_bp.route("/request-lockout-revoke", methods=["POST"])
 def request_lockout_revoke():
+    from models import LockoutRevokeRequest
     client_ip = request.remote_addr or "127.0.0.1"
-    email = request.form.get("email", "").strip()
+    email = request.form.get("email", "").strip() or "aarav.sharma@example.com"
+    
+    # Save to Database for 100% Persistence
+    existing = LockoutRevokeRequest.query.filter_by(ip_address=client_ip, status="Pending Admin Approval").first()
+    if not existing:
+        req_obj = LockoutRevokeRequest(ip_address=client_ip, email=email, status="Pending Admin Approval")
+        db.session.add(req_obj)
+        db.session.commit()
+
     REVOKE_REQUESTS[client_ip] = {
         "ip": client_ip,
-        "email": email or "Unknown User",
+        "email": email,
         "status": "Pending Admin Approval",
         "timestamp": datetime.utcnow()
     }
     flash("🔓 Your 5-minute lockout revoke request has been submitted to the Administrator for approval.", "info")
+    return redirect(url_for("auth.login"))
+
+
+@auth_bp.route("/demo/trigger-lockout")
+def trigger_demo_lockout():
+    """1-Click Instant Lockout Trigger for Supervisor Demo"""
+    client_ip = request.remote_addr or "127.0.0.1"
+    for _ in range(MAX_FAILED_ATTEMPTS):
+        record_failed_attempt(client_ip)
+    flash("🔒 5-Minute Rate Limit Account Lockout triggered for demo!", "danger")
     return redirect(url_for("auth.login"))
 
 
@@ -112,24 +131,26 @@ def login():
             return redirect(url_for("admin.dashboard"))
         return redirect(url_for("profile.dashboard"))
 
-    if request.method == "POST":
-        client_ip = request.remote_addr or "127.0.0.1"
-        security_mode = session.get("security_mode", "ON")
-        email = request.form.get("email", "").strip().lower()
+    client_ip = request.remote_addr or "127.0.0.1"
+    security_mode = session.get("security_mode", "ON")
 
+    if request.method == "POST":
         # Rate Limiting check (Bypassed when Security Mode is OFF)
         if security_mode == "ON" and not check_rate_limit(client_ip):
-            has_requested = client_ip in REVOKE_REQUESTS
-            revoke_status = REVOKE_REQUESTS.get(client_ip, {}).get("status")
+            from models import LockoutRevokeRequest
+            db_req = LockoutRevokeRequest.query.filter_by(ip_address=client_ip, status="Pending Admin Approval").first()
+            has_requested = bool(db_req or client_ip in REVOKE_REQUESTS)
+            revoke_status = "Pending Admin Approval" if has_requested else None
             return render_template(
                 "login.html",
                 is_locked_out=True,
                 client_ip=client_ip,
-                email=email,
+                email=request.form.get("email", "").strip().lower(),
                 has_requested=has_requested,
                 revoke_status=revoke_status
             ), 429
 
+        email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
         remember = request.form.get("remember")
 

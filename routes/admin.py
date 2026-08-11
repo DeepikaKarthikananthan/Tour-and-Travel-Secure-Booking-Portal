@@ -79,8 +79,15 @@ def dashboard():
         "Cancelled": Booking.query.filter_by(status="Cancelled").count(),
     }
 
+    from models import LockoutRevokeRequest
     from routes.auth import REVOKE_REQUESTS, LOGIN_ATTEMPTS
-    lockout_requests = list(REVOKE_REQUESTS.values())
+    
+    db_lockouts = LockoutRevokeRequest.query.filter_by(status="Pending Admin Approval").all()
+    lockout_requests = [{"ip": r.ip_address, "email": r.email, "status": r.status, "timestamp": r.created_at} for r in db_lockouts]
+    
+    for ip, req in REVOKE_REQUESTS.items():
+        if not any(x["ip"] == ip for x in lockout_requests):
+            lockout_requests.append(req)
 
     return render_template(
         "admin/dashboard.html",
@@ -96,12 +103,20 @@ def dashboard():
 @admin_bp.route("/lockout/approve", methods=["POST"])
 @admin_required
 def approve_lockout_revoke():
+    from models import LockoutRevokeRequest
     from routes.auth import REVOKE_REQUESTS, LOGIN_ATTEMPTS
     ip_to_revoke = request.form.get("ip_address", "").strip()
+
     if ip_to_revoke in LOGIN_ATTEMPTS:
         LOGIN_ATTEMPTS.pop(ip_to_revoke, None)
     if ip_to_revoke in REVOKE_REQUESTS:
         REVOKE_REQUESTS.pop(ip_to_revoke, None)
+
+    db_reqs = LockoutRevokeRequest.query.filter_by(ip_address=ip_to_revoke, status="Pending Admin Approval").all()
+    for req in db_reqs:
+        req.status = "Approved & Revoked"
+    db.session.commit()
+
     flash(f"🔓 Account lockout for IP {ip_to_revoke} has been REVOKED by Administrator. User can log in again immediately.", "success")
     return redirect(url_for("admin.dashboard"))
 
