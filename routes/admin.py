@@ -118,7 +118,15 @@ def approve_lockout_revoke():
     db.session.commit()
 
     flash(f"🔓 Account lockout for IP {ip_to_revoke} has been REVOKED by Administrator. User can log in again immediately.", "success")
-    return redirect(url_for("admin.dashboard"))
+    return redirect(request.referrer or url_for("admin.dashboard"))
+
+
+@admin_bp.route("/lockouts")
+@admin_required
+def manage_lockouts():
+    from models import LockoutRevokeRequest
+    all_requests = LockoutRevokeRequest.query.order_by(LockoutRevokeRequest.created_at.desc()).all()
+    return render_template("admin/lockouts.html", requests=all_requests)
 
 
 # ------------------------------------------------------------- TOURS ----

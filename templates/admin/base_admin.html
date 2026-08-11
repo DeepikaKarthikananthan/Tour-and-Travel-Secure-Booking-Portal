@@ -25,6 +25,7 @@
             <a class="nav-link {% if active == 'tours' %}active{% endif %}" href="{{ url_for('admin.manage_tours') }}"><i class="fa-solid fa-map me-2"></i>Manage Tours</a>
             <a class="nav-link {% if active == 'add_tour' %}active{% endif %}" href="{{ url_for('admin.add_tour') }}"><i class="fa-solid fa-circle-plus me-2"></i>Add Tour</a>
             <a class="nav-link {% if active == 'users' %}active{% endif %}" href="{{ url_for('admin.manage_users') }}"><i class="fa-solid fa-users me-2"></i>Manage Users</a>
+            <a class="nav-link {% if active == 'lockouts' %}active{% endif %}" href="{{ url_for('admin.manage_lockouts') }}"><i class="fa-solid fa-user-lock me-2 text-danger"></i>Lockouts & Revokes</a>
             <a class="nav-link {% if active == 'bookings' %}active{% endif %}" href="{{ url_for('admin.manage_bookings') }}"><i class="fa-solid fa-ticket me-2"></i>Bookings & Refunds</a>
             <a class="nav-link {% if active == 'custom_trips' %}active{% endif %}" href="{{ url_for('admin.manage_custom_trips') }}"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Custom Trips</a>
             <a class="nav-link {% if active == 'assistance' %}active{% endif %}" href="{{ url_for('admin.manage_assistance') }}"><i class="fa-solid fa-life-ring me-2"></i>Assistance Tickets</a>

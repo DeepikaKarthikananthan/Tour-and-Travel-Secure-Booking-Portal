@@ -64,12 +64,14 @@
     </div>
 </div>
 
-{% if lockout_requests %}
 <div class="wf-panel p-4 mb-4 border-danger shadow-sm">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="text-danger mb-0"><i class="fa-solid fa-lock-open me-2"></i> Pending Account Lockout Revoke Requests</h5>
-        <span class="badge bg-danger">{{ lockout_requests|length }} Request(s) Pending</span>
+        <h5 class="text-danger mb-0"><i class="fa-solid fa-user-lock me-2"></i> Account Lockouts & Revoke Permission Manager</h5>
+        <a href="{{ url_for('admin.manage_lockouts') }}" class="btn btn-sm btn-outline-danger font-monospace">
+            <i class="fa-solid fa-shield-halved me-1"></i> View Lockout Logs
+        </a>
     </div>
+    {% if lockout_requests %}
     <div class="table-responsive">
         <table class="table align-middle mb-0">
             <thead class="table-dark">
@@ -87,7 +89,7 @@
                     <td class="fw-bold">{{ req.email }}</td>
                     <td><code>{{ req.ip }}</code></td>
                     <td><span class="badge bg-warning text-dark">{{ req.status }}</span></td>
-                    <td class="small text-muted">{{ req.timestamp.strftime('%b %d, %H:%M:%S') if req.timestamp else 'Just now' }}</td>
+                    <td class="small text-muted">{{ req.timestamp.strftime('%b %d, %H:%M:%S') if req.timestamp and req.timestamp.strftime is defined else 'Just now' }}</td>
                     <td class="text-end pe-3">
                         <form action="{{ url_for('admin.approve_lockout_revoke') }}" method="post" class="d-inline">
                             <input type="hidden" name="ip_address" value="{{ req.ip }}">
@@ -101,8 +103,14 @@
             </tbody>
         </table>
     </div>
+    {% else %}
+    <div class="p-3 bg-light rounded text-center text-muted small">
+        <i class="fa-solid fa-shield-cat fs-4 d-block mb-2 text-success"></i>
+        <strong>No Active IP Lockouts or Pending Revoke Requests.</strong>
+        <div class="mt-1">When a user exceeds 5 failed login attempts and requests a revoke, their request will appear here for 1-click admin approval.</div>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
 
 <div class="row g-3 mb-4">
     <div class="col-lg-7">
