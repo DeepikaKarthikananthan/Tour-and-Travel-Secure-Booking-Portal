@@ -113,7 +113,7 @@ TOURS_DATA = [
     dict(
         name="Maldives Overwater Bliss",
         destination="Maldives",
-        category="Honeymoon",
+        category="Dreamy Place",
         duration="5 Days / 4 Nights",
         price=2199.0,
         child_price=1499.0,
@@ -121,7 +121,7 @@ TOURS_DATA = [
         rating=5.0,
         description=(
             "Stay in an overwater villa surrounded by turquoise lagoons — "
-            "the ultimate honeymoon and relaxation destination."
+            "the ultimate dreamy place and relaxation destination."
         ),
         itinerary=(
             "Day 1: Arrival & speedboat transfer to resort\n"
@@ -262,7 +262,7 @@ TOURS_DATA = [
     dict(
         name="Santorini Sunset Escape",
         destination="Santorini",
-        category="Honeymoon",
+        category="Dreamy Place",
         duration="5 Days / 4 Nights",
         price=1799.0,
         child_price=1199.0,
